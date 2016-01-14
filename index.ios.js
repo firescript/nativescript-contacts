@@ -29,7 +29,7 @@ var CustomCNContactPickerViewControllerDelegate = NSObject.extend({
     protocols: [CNContactPickerDelegate]
 });
 
-function pick(){
+function one(){
     return new Promise(function (resolve, reject) {  
         var controller = CNContactPickerViewController.alloc().init();
         var delegate = CustomCNContactPickerViewControllerDelegate.alloc().initWithResolveReject(resolve, reject);
@@ -40,4 +40,4 @@ function pick(){
     });
 }
 
-exports.pick = pick;
+exports.one = one;
