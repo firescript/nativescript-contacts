@@ -25,3 +25,6 @@ contacts.one().then(function(args){
     console.log(args.ios.givenName);
 });;
 ```
+
+See apples docs on properties available: 
+https://developer.apple.com/library/mac/documentation/Contacts/Reference/CNContact_Class/index.html#//apple_ref/occ/cl/CNContact
