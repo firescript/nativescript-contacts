@@ -11,7 +11,7 @@ Run `tns plugin add nativescript-contacts`
 To use the messenger module you must first `require()` it.
 
 ```js
-var messenger = require( "nativescript-contacts" );
+var contacts = require( "nativescript-contacts" );
 ```
 
 ### Method
