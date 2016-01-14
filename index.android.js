@@ -1,6 +1,6 @@
 var appModule = require("application");
 
-exports.pick = function() {
+exports.one = function() {
     return new Promise(function(resolve, reject) {
         try {
             var PICK_CONTACT = 1001;
