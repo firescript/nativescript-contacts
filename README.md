@@ -30,7 +30,7 @@ contacts.one().then(function(args){
     // phoneNumbers returns an array, so we are just going to grab the first one
     console.log(contact.phoneNumbers[0].value.stringValue); 
     // emailAddresses returns an array, so we are just going to grab the first one
-    console.log(contact.emailAddresses[0].value.stringValue);        
+    console.log(contact.emailAddresses[0].value);        
     
 });;
 ```
