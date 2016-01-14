@@ -22,8 +22,16 @@ var contacts = require( "nativescript-contacts" );
 ```js
 var contacts = require( "nativescript-contacts" );
 contacts.one().then(function(args){
+    
     // we must specify ios as its directory is different then android.
-    console.log(args.ios.givenName);
+    var contact = args.ios;
+    // lets say you wanted to grab first name and last name phone number and email 
+    console.log(contact.givenName + " " + contact.familyName);
+    // phoneNumbers returns an array, so we are just going to grab the first one
+    console.log(contact.phoneNumbers[0].value.stringValue); 
+    // emailAddresses returns an array, so we are just going to grab the first one
+    console.log(contact.emailAddresses[0].value.stringValue);        
+    
 });;
 ```
 
