@@ -5,30 +5,25 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/firescript/nativescript-messenger.git"
+    "url": "git+https://github.com/firescript/nativescript-contacts.git"
   },
   "keywords": [
     "NativeScript",
-    "Contacts"
+    "Contacts",
+    "Address Book",
+    "Contact Directory"
   ],
   "author": {
     "name": "Ryan  Lebel",
     "email": "ryan@firescript.ca"
   },
-  "contributors": [
-    {
-      "name": "Steve McNiven-Scott",
-      "email": "steve@sitefinitysteve.com",
-      "url": "https://github.com/sitefinitysteve"
-    }
-  ],
   "license": {
     "type": "MIT",
-    "url": "https://github.com/firescript/nativescript-messenger/blob/master/LICENSE"
+    "url": "https://github.com/firescript/nativescript-contacts/blob/master/LICENSE"
   },
   "bugs": {
-    "url": "https://github.com/firescript/nativescript-messenger/issues"
+    "url": "https://github.com/firescript/nativescript-contacts/issues"
   },
-  "homepage": "https://github.com/firescript/nativescript-messenger",
+  "homepage": "https://github.com/firescript/nativescript-contacts",
   "nativescript": {}
 }
