@@ -27,10 +27,15 @@ contacts.one().then(function(args){
     var contact = args.ios;
     // lets say you wanted to grab first name and last name phone number and email 
     console.log(contact.givenName + " " + contact.familyName);
-    // phoneNumbers returns an array, so we are just going to grab the first one
-    console.log(contact.phoneNumbers[0].value.stringValue); 
-    // emailAddresses returns an array, so we are just going to grab the first one
-    console.log(contact.emailAddresses[0].value);        
+    // phoneNumbers and emailAddresses return an array, 
+    // however if you dont have a number or email it will crash.
+    // so lets check to see if it exists using the count property
+    if(contact.phoneNumbers.count > 0){
+        console.log(contact.phoneNumbers[0].value.stringValue);
+    }
+    if(contact.emailAddresses.count > 0){
+        console.log(contact.emailAddresses[0].value);        
+    }          
     
 });;
 ```
