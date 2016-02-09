@@ -5,8 +5,11 @@ exports.one = function() {
         try {
             var PICK_CONTACT = 1001;
             var openContactsIntent = new android.content.Intent(android.content.Intent.ACTION_PICK);
+            
             openContactsIntent.setType(android.provider.ContactsContract.Contacts.CONTENT_TYPE);
+            
             var previousResult = appModule.android.onActivityResult;
+            
             appModule.android.onActivityResult = function(requestCode, resultCode, data) {
                 switch (requestCode) {
                     case PICK_CONTACT:
@@ -18,8 +21,10 @@ exports.one = function() {
                                 reject();
                                 return;
                             }
+                            
                             contact.moveToFirst();
                             data = DBGetRowObjectNative(contact);
+                            
                             return resolve({
                                 response: "selected",
                                 ios: null,
@@ -36,6 +41,7 @@ exports.one = function() {
                         break;
                 }
             };
+            
             appModule.android.foregroundActivity.startActivityForResult(openContactsIntent, PICK_CONTACT);
         } catch (e) {
             if (reject) {
