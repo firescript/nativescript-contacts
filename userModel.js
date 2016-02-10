@@ -88,11 +88,19 @@ function User(){
                         });
                 }
             }
-            
-
         }
         else if(appModule.android){
             this.id = contactData["_id"];
+        }
+    }
+    
+    /// TODO:
+    this.getAvatar = function(){
+        if(appModule.ios){
+            return "iOS IMAGE";    
+        }
+        else{
+            return "android IMAGE";
         }
     }
 } 
