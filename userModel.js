@@ -7,12 +7,7 @@ function User(){
         middle: "",
         family: "",
         prefix: "",
-        suffix: "",
-        phonetic: {
-            first: "",
-            middle: "",
-            last: ""   
-        }
+        suffix: ""
     }
     
     this.jobTitle = "";
@@ -20,7 +15,13 @@ function User(){
     this.department = "";
     this.organization = "";
     this.notes = "";
-
+    
+    this.phonetic = {
+       first: "",
+       middle: "",
+       last: ""   
+    }
+    
     this.phoneNumbers = [];
     this.emailAddresses = [];
     this.postalAddresses = [];
@@ -34,15 +35,16 @@ function User(){
             this.name.middle = getiOSValue("middleName", contactData);
             this.name.prefix = getiOSValue("namePrefix", contactData);
             this.name.suffix = getiOSValue("nameSuffix", contactData);
-            this.name.phonetic.first = getiOSValue("phoneticGivenName", contactData);
-            this.name.phonetic.middle = getiOSValue("phoneticMiddleName", contactData);
-            this.name.phonetic.last = getiOSValue("phoneticFamilyName", contactData);
 
             this.jobTitle = getiOSValue("jobTitle", contactData);    
             this.department = getiOSValue("departmentName", contactData);
             this.organization = getiOSValue("organizationName", contactData);
             this.nickname = getiOSValue("nickname", contactData);
             this.notes = getiOSValue("notes", contactData);
+            
+            this.phonetic.first = getiOSValue("phoneticGivenName", contactData);
+            this.phonetic.middle = getiOSValue("phoneticMiddleName", contactData);
+            this.phonetic.last = getiOSValue("phoneticFamilyName", contactData);
             
             if(contactData.phoneNumbers.count > 0){
                 for(var i = 0; i < contactData.phoneNumbers.count; i++){
