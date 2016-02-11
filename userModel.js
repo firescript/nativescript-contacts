@@ -96,6 +96,20 @@ function User(){
                     });
             }
         }
+        
+        if(contactData.urlAddresses.count > 0){
+            for(var i = 0; i < contactData.urlAddresses.count; i++){
+                var urldata = contactData.urlAddresses[i];
+                debugger;
+                this.urls.push(
+                    {
+                        label: urldata.label.replace("_$!<","").replace(">!$_",""),
+                        value: urldata.value
+                    });
+            }
+        }
+        
+        debugger;
     }
     
     //##########################
