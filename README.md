@@ -64,15 +64,15 @@ contacts.getContact().then(function(args){
         }
     }
     
-    jobTitle : "";
-    nickname : "";
-    department : "";
-    organization : "";
-    notes : "";
+    jobTitle : "",
+    nickname : "",
+    department : "",
+    organization : "",
+    notes : "",
 
-    phoneNumbers : []; 
-    emailAddresses : [];
-    postalAddresses : [];
+    phoneNumbers : [], 
+    emailAddresses : [],
+    postalAddresses : [],
     urls : []
 ```
 
