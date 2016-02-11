@@ -111,6 +111,3 @@ contacts.getContact().then(function(args){
 ### iOS
 See apples docs on properties available: 
 https://developer.apple.com/library/mac/documentation/Contacts/Reference/CNContact_Class/index.html#//apple_ref/occ/cl/CNContact
-
-### Android
-
