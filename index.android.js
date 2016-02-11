@@ -1,7 +1,6 @@
 var appModule = require("application");
 var UserModel = require("./userModel");
 
-
 exports.getContact = function() {
     return new Promise(function(resolve, reject) {
         try {
@@ -18,29 +17,24 @@ exports.getContact = function() {
                         appModule.android.onActivityResult = previousResult;
                         
                         if (resultCode === android.app.Activity.RESULT_OK && data != null) {
-                            var contactData = android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
                             var contentResolver = appModule.android.context.getContentResolver(); 
-                            var contact = contentResolver.query(contactData, null, null, null, null);
-                            if (!contact) {
+                            var pickedContactData = data.getData();
+                            var mainCursor = contentResolver.query(pickedContactData, null, null, null, null);
+                            mainCursor.moveToFirst();
+                            if (!mainCursor) {
                                 reject();
                                 return;
                             }
-                            
-                            contact.moveToFirst();
-                            data = convertNativeCursor(contact);
-                            
+
                             //Convert the native contact object
                             var user = new UserModel();
-                            user.initalize(data);
+                            user.initalizeAndroid(mainCursor);
         
                             return resolve({
                                 data: user,
                                 response: "selected",
                                 ios: null,
-                                android: {
-                                    cursor: contact,
-                                    data: data
-                                }
+                                android: mainCursor
                             });
                         } else {
                             reject();
@@ -61,40 +55,4 @@ exports.getContact = function() {
             }
         }
     });
-}
-
-function convertNativeCursor(cursor) {
-    //noinspection JSUnresolvedFunction
-    var count = cursor.getColumnCount();
-    var results = {};
-
-    for (var i=0; i < count; i++) {
-        var type = cursor.getType(i);
-        //noinspection JSUnresolvedFunction
-        var name = cursor.getColumnName(i);
-        console.log(name + " at index" + i );
-        switch (type) {
-            case 0: // NULL
-                results[name] = null;
-                break;
-            case 1: // Integer
-                //noinspection JSUnresolvedFunction
-                results[name] = cursor.getInt(i);
-                break;
-            case 2: // Float
-                //noinspection JSUnresolvedFunction
-                results[name] = cursor.getFloat(i);
-                break;
-            case 3: // String
-                results[name] = cursor.getString(i);
-                break;
-            case 4: // Blob
-                results[name] = cursor.getBlob(i);
-                break;
-            default:
-                throw new Error('Contacts - Unknown Field Type '+ type);
-        }
-    }
-
-    return results;
 }
