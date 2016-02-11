@@ -1,15 +1,32 @@
 
 var appModule = require("application");
 
-exports.getCursor = function(uri, id){
+//Query Sample: 
+//query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+
+exports.getBasicCursor = function(uri, id, projection){
     var contentResolver = appModule.android.context.getContentResolver(); 
     var cursor = contentResolver.query(uri, 
-                                null, 
-                                "name_raw_contact_id=" + id,
-                                null, 
-                                null);
+                                        null, 
+                                        "name_raw_contact_id=" + id,
+                                        null, 
+                                        null);
     cursor.moveToFirst();
     
+    return cursor;
+}
+
+
+//projection: String[]
+//parameters: String[]
+exports.getComplexCursor = function(id, uri, projection, parameters){
+    var contentResolver = appModule.android.context.getContentResolver(); 
+    var cursor = contentResolver.query(uri, 
+                                    projection, 
+                                    "name_raw_contact_id=? AND mimetype=?",
+                                    parameters, 
+                                    null);
+    cursor.moveToFirst();                            
     return cursor;
 }
 

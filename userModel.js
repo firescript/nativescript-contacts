@@ -8,7 +8,8 @@ function User(){
         middle: "",
         family: "",
         prefix: "",
-        suffix: ""
+        suffix: "",
+        displayname: ""
     }
     
     this.jobTitle = "";
@@ -18,17 +19,19 @@ function User(){
     this.notes = "";
     
     this.phonetic = {
-       first: "",
+       given: "",
        middle: "",
-       last: ""   
+       family: ""   
     }
     
     this.phoneNumbers = [];
     this.emailAddresses = [];
     this.postalAddresses = [];
     
+    //##########################
+    // INITALIZE iOS
+    //##########################
     this.initalizeiOS = function(contactData){
-        // IOS
         this.id = getiOSValue("identifier", contactData);
         
         this.name.given = getiOSValue("givenName", contactData);    
@@ -43,9 +46,9 @@ function User(){
         this.nickname = getiOSValue("nickname", contactData);
         this.notes = getiOSValue("notes", contactData);
         
-        this.phonetic.first = getiOSValue("phoneticGivenName", contactData);
+        this.phonetic.given = getiOSValue("phoneticGivenName", contactData);
         this.phonetic.middle = getiOSValue("phoneticMiddleName", contactData);
-        this.phonetic.last = getiOSValue("phoneticFamilyName", contactData);
+        this.phonetic.family = getiOSValue("phoneticFamilyName", contactData);
         
         if(contactData.phoneNumbers.count > 0){
             for(var i = 0; i < contactData.phoneNumbers.count; i++){
@@ -91,6 +94,9 @@ function User(){
         }
     }
     
+    //##########################
+    // INITALIZE ANDROID
+    //##########################
     this.initalizeAndroid = function(cursor){
         var mainCursorJson = androidHelper.convertNativeCursorToJson(cursor);
         this.id = mainCursorJson["_id"];
@@ -98,7 +104,7 @@ function User(){
         //Get phone
         var hasPhone = mainCursorJson["has_phone_number"];
         if(hasPhone === 1){
-            var phoneCursor= androidHelper.getCursor(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI, this.id);
+            var phoneCursor= androidHelper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI, this.id);
             while(phoneCursor.moveToNext()){
                 var phoneCursorJson = androidHelper.convertNativeCursorToJson(phoneCursor);
                 this.phoneNumbers.push(
@@ -109,9 +115,9 @@ function User(){
                     });
             };
         }
- 
+
         //Get email
-        var emailCursor = androidHelper.getCursor(android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_URI, this.id);
+        var emailCursor = androidHelper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_URI, this.id);
         while(emailCursor.moveToNext()){
             var emailCursorJson = androidHelper.convertNativeCursorToJson(emailCursor);
             this.emailAddresses.push(
@@ -121,9 +127,45 @@ function User(){
                 value: emailCursorJson["data1"]
             });
         };
+   
+        //Get Nickname
+        var nickNameParameters = [
+            this.id.toString(),
+            "vnd.android.cursor.item/nickname" //ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE
+        ];
+
+        var nicknameCursor = androidHelper.getComplexCursor(this.id,
+                                                            android.provider.ContactsContract.Data.CONTENT_URI,
+                                                            ["data1"],
+                                                            nickNameParameters);
+        var nicknameCursorJson = androidHelper.convertNativeCursorToJson(nicknameCursor);
+        this.nickname = nicknameCursorJson["data1"];
+        
+        //Get Basic User Details
+        var userNameParameters = [
+            this.id.toString(),
+            "vnd.android.cursor.item/name" //ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
+        ];
+        
+        var usernameCursor = androidHelper.getComplexCursor(this.id,
+                                                            android.provider.ContactsContract.Data.CONTENT_URI,
+                                                            null,
+                                                            userNameParameters);
+                                                            
+        var usernameCursorJson = androidHelper.convertNativeCursorToJson(usernameCursor);
+        this.name.given = usernameCursorJson["data2"];
+        this.name.middle = usernameCursorJson["data5"];
+        this.name.family = usernameCursorJson["data3"];
+        this.name.prefix = usernameCursorJson["data4"];
+        this.name.suffix = usernameCursorJson["data6"];
+        this.name.displayname = usernameCursorJson["data1"];
+        
+        this.phonetic.given = usernameCursorJson["data7"];
+        this.phonetic.middle = usernameCursorJson["data8"];
+        this.phonetic.family = usernameCursorJson["data9"];
     }
     
-    /// TODO:
+    /// TODO: NOT FUNCTIONAL ATM
     this.getAvatar = function(){
         if(appModule.ios){
             return "iOS IMAGE";    
