@@ -26,7 +26,7 @@ exports.getComplexCursor = function(id, uri, projection, parameters){
                                     "name_raw_contact_id=? AND mimetype=?",
                                     parameters, 
                                     null);
-    cursor.moveToFirst();                            
+                         
     return cursor;
 }
 
@@ -52,6 +52,41 @@ exports.getEmailType = function(data2, data3){
             break;
         case "4":
             typeConverted = "Mobile"; //TYPE_MOBILE
+            break;
+    }
+    
+    return typeConverted;
+}
+
+//http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Website.html
+exports.getWebsiteType = function(data2, data3){
+    var typeInt = data2;
+    var typeConverted = "";
+    
+    switch(typeInt){
+        case "0": //TYPE_CUSTOM
+            typeConverted = data3; //LABEL
+            break;
+        case "1":
+            typeConverted = "Homepage"; //TYPE_HOMEPAGE
+            break;
+        case "2":
+            typeConverted = "Blog"; //TYPE_BLOG
+            break;
+        case "3":
+            typeConverted = "Profile"; //TYPE_PROFILE
+            break;
+        case "4":
+            typeConverted = "Home"; //TYPE_HOME
+            break;
+        case "5":
+            typeConverted = "Work"; //TYPE_WORK
+            break;
+        case "6":
+            typeConverted = "FTP"; //TYPE_FTP
+            break;
+        case "7":
+            typeConverted = "Other"; //TYPE_OTHER
             break;
     }
     

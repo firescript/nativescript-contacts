@@ -1,5 +1,6 @@
 var appModule = require("application");
-var androidHelper = require("./androidHelpers");
+var androidHelper = require("./androidHelper");
+var iosHelper = require("./iosHelper");
 
 function User(){
     this.id = "";
@@ -24,6 +25,7 @@ function User(){
        family: ""   
     }
     
+    this.urls = [];
     this.phoneNumbers = [];
     this.emailAddresses = [];
     this.postalAddresses = [];
@@ -32,23 +34,24 @@ function User(){
     // INITALIZE iOS
     //##########################
     this.initalizeiOS = function(contactData){
-        this.id = getiOSValue("identifier", contactData);
+        this.id = iosHelper.getiOSValue("identifier", contactData);
         
-        this.name.given = getiOSValue("givenName", contactData);    
-        this.name.family = getiOSValue("familyName", contactData);
-        this.name.middle = getiOSValue("middleName", contactData);
-        this.name.prefix = getiOSValue("namePrefix", contactData);
-        this.name.suffix = getiOSValue("nameSuffix", contactData);
+        this.name.given = iosHelper.getiOSValue("givenName", contactData);    
+        this.name.family = iosHelper.getiOSValue("familyName", contactData);
+        this.name.middle = iosHelper.getiOSValue("middleName", contactData);
+        this.name.prefix = iosHelper.getiOSValue("namePrefix", contactData);
+        this.name.suffix = iosHelper.getiOSValue("nameSuffix", contactData);
 
-        this.jobTitle = getiOSValue("jobTitle", contactData);    
-        this.department = getiOSValue("departmentName", contactData);
-        this.organization = getiOSValue("organizationName", contactData);
-        this.nickname = getiOSValue("nickname", contactData);
-        this.notes = getiOSValue("notes", contactData);
+        this.jobTitle = iosHelper.getiOSValue("jobTitle", contactData);    
+        this.department = iosHelper.getiOSValue("departmentName", contactData);
+        this.organization = iosHelper.getiOSValue("organizationName", contactData);
+        this.nickname = iosHelper.getiOSValue("nickname", contactData);
         
-        this.phonetic.given = getiOSValue("phoneticGivenName", contactData);
-        this.phonetic.middle = getiOSValue("phoneticMiddleName", contactData);
-        this.phonetic.family = getiOSValue("phoneticFamilyName", contactData);
+        this.phonetic.given = iosHelper.getiOSValue("phoneticGivenName", contactData);
+        this.phonetic.middle = iosHelper.getiOSValue("phoneticMiddleName", contactData);
+        this.phonetic.family = iosHelper.getiOSValue("phoneticFamilyName", contactData);
+        
+        this.notes = iosHelper.getiOSValue("notes", contactData);
         
         if(contactData.phoneNumbers.count > 0){
             for(var i = 0; i < contactData.phoneNumbers.count; i++){
@@ -107,12 +110,11 @@ function User(){
             this.id.toString(),
             "vnd.android.cursor.item/name" //ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
         ];
-        
         var usernameCursor = androidHelper.getComplexCursor(this.id,
                                                             android.provider.ContactsContract.Data.CONTENT_URI,
                                                             null,
                                                             userNameParameters);
-                                                            
+        usernameCursor.moveToFirst();                                                     
         var usernameCursorJson = androidHelper.convertNativeCursorToJson(usernameCursor);
         this.name.given = usernameCursorJson["data2"];
         this.name.middle = usernameCursorJson["data5"];
@@ -136,6 +138,7 @@ function User(){
                                                             android.provider.ContactsContract.Data.CONTENT_URI,
                                                             ["data1"],
                                                             nickNameParameters);
+        nicknameCursor.moveToFirst();   
         var nicknameCursorJson = androidHelper.convertNativeCursorToJson(nicknameCursor);
         this.nickname = nicknameCursorJson["data1"];
         nicknameCursor.close();
@@ -190,22 +193,53 @@ function User(){
             });
         };
         postalCursor.close();
+        
+        //Get Notes
+        var notesParameters = [
+            this.id.toString(),
+            "vnd.android.cursor.item/note" //ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
+        ];
+        var notesCursor = androidHelper.getComplexCursor(this.id,
+                                                            android.provider.ContactsContract.Data.CONTENT_URI,
+                                                            ["data1"],
+                                                            notesParameters);
+        
+        notesCursor.moveToFirst();
+        var notesCursorJson = androidHelper.convertNativeCursorToJson(notesCursor);
+        this.notes = notesCursorJson["data1"];
+        notesCursor.close();
+        
+        //Get Websites
+        var websitesParameters = [
+            this.id.toString(),
+            "vnd.android.cursor.item/website" //ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
+        ];
+        var websitesCursor = androidHelper.getComplexCursor(this.id,
+                                                            android.provider.ContactsContract.Data.CONTENT_URI,
+                                                            null,
+                                                            websitesParameters);
+        while(websitesCursor.moveToNext()){
+            var websitesCursorJson = androidHelper.convertNativeCursorToJson(websitesCursor);
+   
+            this.urls.push(
+            {
+                label: androidHelper.getWebsiteType(websitesCursorJson["data2"], websitesCursorJson["data3"]),
+                value: websitesCursorJson["data1"]
+            });
+        };
+        websitesCursor.close();
     }
     
     /// TODO: NOT FUNCTIONAL ATM
     this.getAvatar = function(){
         if(appModule.ios){
-            return "iOS IMAGE";    
+            return iosHelper.getAvatar();
         }
         else{
             return androidHelper.getAvatar();
         }
     }
 } 
-
-function getiOSValue(key, contactData){
-    return contactData.isKeyAvailable(key) ? contactData[key] : "";
-}
 
 
 
