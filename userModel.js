@@ -87,7 +87,8 @@ function User(){
                             state: postaldata.value.state,
                             postalCode: postaldata.value.postalCode,
                             country: postaldata.value.country,
-                            countryCode: postaldata.value.ISOCountryCode
+                            countryCode: postaldata.value.ISOCountryCode,
+                            formatted: ""
                         }
                     });
             }
@@ -100,47 +101,7 @@ function User(){
     this.initalizeAndroid = function(cursor){
         var mainCursorJson = androidHelper.convertNativeCursorToJson(cursor);
         this.id = mainCursorJson["_id"];
-        
-        //Get phone
-        var hasPhone = mainCursorJson["has_phone_number"];
-        if(hasPhone === 1){
-            var phoneCursor= androidHelper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI, this.id);
-            while(phoneCursor.moveToNext()){
-                var phoneCursorJson = androidHelper.convertNativeCursorToJson(phoneCursor);
-                this.phoneNumbers.push(
-                    {
-                        id: "",
-                        label: androidHelper.getPhoneType(phoneCursorJson["data2"], phoneCursorJson["data3"]),
-                        value: phoneCursorJson["data1"]
-                    });
-            };
-        }
-
-        //Get email
-        var emailCursor = androidHelper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_URI, this.id);
-        while(emailCursor.moveToNext()){
-            var emailCursorJson = androidHelper.convertNativeCursorToJson(emailCursor);
-            this.emailAddresses.push(
-            {
-                id: emailCursorJson["_id"],
-                label: androidHelper.getEmailType(emailCursorJson["data2"], emailCursorJson["data3"]),
-                value: emailCursorJson["data1"]
-            });
-        };
-   
-        //Get Nickname
-        var nickNameParameters = [
-            this.id.toString(),
-            "vnd.android.cursor.item/nickname" //ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE
-        ];
-
-        var nicknameCursor = androidHelper.getComplexCursor(this.id,
-                                                            android.provider.ContactsContract.Data.CONTENT_URI,
-                                                            ["data1"],
-                                                            nickNameParameters);
-        var nicknameCursorJson = androidHelper.convertNativeCursorToJson(nicknameCursor);
-        this.nickname = nicknameCursorJson["data1"];
-        
+                
         //Get Basic User Details
         var userNameParameters = [
             this.id.toString(),
@@ -163,6 +124,72 @@ function User(){
         this.phonetic.given = usernameCursorJson["data7"];
         this.phonetic.middle = usernameCursorJson["data8"];
         this.phonetic.family = usernameCursorJson["data9"];
+        usernameCursor.close();
+        
+        //Get Nickname
+        var nickNameParameters = [
+            this.id.toString(),
+            "vnd.android.cursor.item/nickname" //ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE
+        ];
+
+        var nicknameCursor = androidHelper.getComplexCursor(this.id,
+                                                            android.provider.ContactsContract.Data.CONTENT_URI,
+                                                            ["data1"],
+                                                            nickNameParameters);
+        var nicknameCursorJson = androidHelper.convertNativeCursorToJson(nicknameCursor);
+        this.nickname = nicknameCursorJson["data1"];
+        nicknameCursor.close();
+        
+        //Get phone
+        var hasPhone = mainCursorJson["has_phone_number"];
+        if(hasPhone === 1){
+            var phoneCursor= androidHelper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI, this.id);
+            while(phoneCursor.moveToNext()){
+                var phoneCursorJson = androidHelper.convertNativeCursorToJson(phoneCursor);
+                this.phoneNumbers.push(
+                    {
+                        id: "",
+                        label: androidHelper.getPhoneType(phoneCursorJson["data2"], phoneCursorJson["data3"]),
+                        value: phoneCursorJson["data1"]
+                    });
+            };
+            phoneCursor.close();
+        }
+
+        //Get email
+        var emailCursor = androidHelper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_URI, this.id);
+        while(emailCursor.moveToNext()){
+            var emailCursorJson = androidHelper.convertNativeCursorToJson(emailCursor);
+            this.emailAddresses.push(
+            {
+                id: emailCursorJson["_id"],
+                label: androidHelper.getEmailType(emailCursorJson["data2"], emailCursorJson["data3"]),
+                value: emailCursorJson["data1"]
+            });
+        };
+        emailCursor.close();
+   
+        //Get addresses
+        var postalCursor = androidHelper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI, this.id);
+        while(postalCursor.moveToNext()){
+            var postalCursorJson = androidHelper.convertNativeCursorToJson(postalCursor);
+   
+            this.postalAddresses.push(
+            {
+                id: postalCursorJson["_id"],
+                label: androidHelper.getAddressType(postalCursorJson["data2"], postalCursorJson["data3"]),
+                location: {
+                            street: postalCursorJson["data4"],
+                            city: postalCursorJson["data7"],
+                            state: postalCursorJson[""],
+                            postalCode: postalCursorJson["data9"],
+                            country: postalCursorJson["data10"],
+                            countryCode: postalCursorJson[""],
+                            formatted: postalCursorJson["data1"]
+                        }
+            });
+        };
+        postalCursor.close();
     }
     
     /// TODO: NOT FUNCTIONAL ATM

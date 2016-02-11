@@ -4,14 +4,14 @@ var appModule = require("application");
 //Query Sample: 
 //query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 
-exports.getBasicCursor = function(uri, id, projection){
+exports.getBasicCursor = function(uri, id){
     var contentResolver = appModule.android.context.getContentResolver(); 
     var cursor = contentResolver.query(uri, 
                                         null, 
                                         "name_raw_contact_id=" + id,
                                         null, 
                                         null);
-    cursor.moveToFirst();
+    //cursor.moveToFirst();
     
     return cursor;
 }
@@ -52,6 +52,29 @@ exports.getEmailType = function(data2, data3){
             break;
         case "4":
             typeConverted = "Mobile"; //TYPE_MOBILE
+            break;
+    }
+    
+    return typeConverted;
+}
+
+//http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Email.html
+exports.getAddressType = function(data2, data3){
+    var typeInt = data2;
+    var typeConverted = "";
+    
+    switch(typeInt){
+        case "0": //TYPE_CUSTOM
+            typeConverted = data3; //LABEL
+            break;
+        case "1":
+            typeConverted = "Home"; //TYPE_HOME
+            break;
+        case "2":
+            typeConverted = "Work"; //TYPE_WORK
+            break;
+        case "3":
+            typeConverted = "Other"; //TYPE_OTHER
             break;
     }
     
