@@ -10,7 +10,12 @@ function User(){
         family: "",
         prefix: "",
         suffix: "",
-        displayname: ""
+        displayname: "",
+        phonetic : {
+            given: "",
+            middle: "",
+            family: ""   
+        }
     }
     
     this.jobTitle = "";
@@ -18,13 +23,7 @@ function User(){
     this.department = "";
     this.organization = "";
     this.notes = "";
-    
-    this.phonetic = {
-       given: "",
-       middle: "",
-       family: ""   
-    }
-    
+
     this.urls = [];
     this.phoneNumbers = [];
     this.emailAddresses = [];
@@ -47,9 +46,9 @@ function User(){
         this.organization = iosHelper.getiOSValue("organizationName", contactData);
         this.nickname = iosHelper.getiOSValue("nickname", contactData);
         
-        this.phonetic.given = iosHelper.getiOSValue("phoneticGivenName", contactData);
-        this.phonetic.middle = iosHelper.getiOSValue("phoneticMiddleName", contactData);
-        this.phonetic.family = iosHelper.getiOSValue("phoneticFamilyName", contactData);
+        this.name.phonetic.given = iosHelper.getiOSValue("phoneticGivenName", contactData);
+        this.name.phonetic.middle = iosHelper.getiOSValue("phoneticMiddleName", contactData);
+        this.name.phonetic.family = iosHelper.getiOSValue("phoneticFamilyName", contactData);
         
         this.notes = iosHelper.getiOSValue("notes", contactData);
         
@@ -137,9 +136,9 @@ function User(){
         this.name.suffix = usernameCursorJson["data6"];
         this.name.displayname = usernameCursorJson["data1"];
         
-        this.phonetic.given = usernameCursorJson["data7"];
-        this.phonetic.middle = usernameCursorJson["data8"];
-        this.phonetic.family = usernameCursorJson["data9"];
+        this.name.phonetic.given = usernameCursorJson["data7"];
+        this.name.phonetic.middle = usernameCursorJson["data8"];
+        this.name.phonetic.family = usernameCursorJson["data9"];
         usernameCursor.close();
         
         //Get Nickname

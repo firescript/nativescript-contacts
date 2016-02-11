@@ -50,16 +50,17 @@ contacts.getContact().then(function(args){
 ### Single User Data Structure
 ```js
     id : "";
-    name : {
+    name = {
         given: "",
         middle: "",
         family: "",
         prefix: "",
         suffix: "",
-        phonetic: {
-            first: "",
+        displayname: "",
+        phonetic : {
+            given: "",
             middle: "",
-            last: ""   
+            family: ""   
         }
     }
     
@@ -72,6 +73,7 @@ contacts.getContact().then(function(args){
     phoneNumbers : []; 
     emailAddresses : [];
     postalAddresses : [];
+    urls : []
 ```
 
 ### PhoneNumber structure
@@ -87,6 +89,14 @@ contacts.getContact().then(function(args){
 ``` js
 {
     id: "",
+    label: "",
+    value: ""
+}
+```
+
+### Url structure
+``` js
+{
     label: "",
     value: ""
 }
