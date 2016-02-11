@@ -41,7 +41,7 @@ exports.getEmailType = function(data2, data3){
     return typeConverted;
 }
 
-//http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Email.html
+//http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Phone.html
 exports.getPhoneType = function(data2, data3){
     var typeInt = data2;
     var typeConverted = "";
