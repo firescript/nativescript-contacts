@@ -18,10 +18,19 @@ function User(){
         }
     }
     
-    this.jobTitle = "";
+    this.organization = {
+        name: "",
+        jobTitle: "",
+        department: "",
+        
+        //android only
+        symbol: "",
+        phonetic: "",
+        location: "",
+        type: ""
+    }
+    
     this.nickname = "";
-    this.department = "";
-    this.organization = "";
     this.notes = "";
 
     this.urls = [];
@@ -35,20 +44,22 @@ function User(){
     this.initalizeiOS = function(contactData){
         this.id = iosHelper.getiOSValue("identifier", contactData);
         
+        //NAME
         this.name.given = iosHelper.getiOSValue("givenName", contactData);    
         this.name.family = iosHelper.getiOSValue("familyName", contactData);
         this.name.middle = iosHelper.getiOSValue("middleName", contactData);
         this.name.prefix = iosHelper.getiOSValue("namePrefix", contactData);
         this.name.suffix = iosHelper.getiOSValue("nameSuffix", contactData);
-
-        this.jobTitle = iosHelper.getiOSValue("jobTitle", contactData);    
-        this.department = iosHelper.getiOSValue("departmentName", contactData);
-        this.organization = iosHelper.getiOSValue("organizationName", contactData);
-        this.nickname = iosHelper.getiOSValue("nickname", contactData);
-        
         this.name.phonetic.given = iosHelper.getiOSValue("phoneticGivenName", contactData);
         this.name.phonetic.middle = iosHelper.getiOSValue("phoneticMiddleName", contactData);
         this.name.phonetic.family = iosHelper.getiOSValue("phoneticFamilyName", contactData);
+
+        //ORG
+        this.organization.jobTitle = iosHelper.getiOSValue("jobTitle", contactData);    
+        this.organization.department = iosHelper.getiOSValue("departmentName", contactData);
+        this.organization.name = iosHelper.getiOSValue("organizationName", contactData);
+        
+        this.nickname = iosHelper.getiOSValue("nickname", contactData);
         
         this.notes = iosHelper.getiOSValue("notes", contactData);
         
@@ -225,7 +236,7 @@ function User(){
         //Get Websites
         var websitesParameters = [
             this.id.toString(),
-            "vnd.android.cursor.item/website" //ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
+            "vnd.android.cursor.item/website" //ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE
         ];
         var websitesCursor = androidHelper.getComplexCursor(this.id,
                                                             android.provider.ContactsContract.Data.CONTENT_URI,
@@ -241,6 +252,28 @@ function User(){
             });
         };
         websitesCursor.close();
+        
+        //Get Organization
+        var orgParameters = [
+            this.id.toString(),
+            "vnd.android.cursor.item/organization" //ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE
+        ];
+        var orgCursor = androidHelper.getComplexCursor(this.id,
+                                                            android.provider.ContactsContract.Data.CONTENT_URI,
+                                                            null,
+                                                            orgParameters);
+        
+        orgCursor.moveToFirst();
+        var orgCursorJson = androidHelper.convertNativeCursorToJson(orgCursor);
+        this.organization.jobTitle = orgCursorJson["data4"];
+        this.organization.name = orgCursorJson["data1"];
+        this.organization.department = orgCursorJson["data5"];
+        this.organization.symbol = orgCursorJson["data7"];
+        this.organization.phonetic = orgCursorJson["data8"];
+        this.organization.location = orgCursorJson["data9"];
+        this.organization.type = androidHelper.getOrgType(orgCursorJson["data2"], orgCursorJson["data3"]);
+        orgCursor.close();
+        
     }
     
     /// TODO: NOT FUNCTIONAL ATM

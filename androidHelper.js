@@ -58,6 +58,25 @@ exports.getEmailType = function(data2, data3){
     return typeConverted;
 }
 
+//http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Organization.html
+exports.getOrgType = function(data2, data3){
+    var typeInt = data2;
+    var typeConverted = "";
+    switch(typeInt){
+        case "0": //TYPE_CUSTOM
+            typeConverted = data3; //LABEL
+            break;
+        case "1":
+            typeConverted = "Work"; //TYPE_WORK
+            break;
+        case "2":
+            typeConverted = "Other"; //TYPE_OTHER
+            break;
+    }
+    
+    return typeConverted;
+}
+
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Website.html
 exports.getWebsiteType = function(data2, data3){
     var typeInt = data2;
