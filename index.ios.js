@@ -23,7 +23,7 @@ var CustomCNContactPickerViewControllerDelegate = NSObject.extend({
         
         //Convert the native contact object
         var user = new UserModel();
-        user.initalize(contact);
+        user.initalizeiOS(contact);
         
         this.resolve({
             data: user,
