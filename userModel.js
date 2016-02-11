@@ -110,7 +110,6 @@ function User(){
         if(contactData.urlAddresses.count > 0){
             for(var i = 0; i < contactData.urlAddresses.count; i++){
                 var urldata = contactData.urlAddresses[i];
-                debugger;
                 this.urls.push(
                     {
                         label: urldata.label.replace("_$!<","").replace(">!$_",""),
@@ -118,8 +117,6 @@ function User(){
                     });
             }
         }
-        
-        debugger;
     }
     
     //##########################
@@ -128,7 +125,7 @@ function User(){
     this.initalizeAndroid = function(cursor){
         var mainCursorJson = androidHelper.convertNativeCursorToJson(cursor);
         this.id = mainCursorJson["_id"];
-                
+               
         //Get Basic User Details
         var userNameParameters = [
             this.id.toString(),
@@ -162,11 +159,13 @@ function User(){
                                                             android.provider.ContactsContract.Data.CONTENT_URI,
                                                             ["data1"],
                                                             nickNameParameters);
-        nicknameCursor.moveToFirst();   
-        var nicknameCursorJson = androidHelper.convertNativeCursorToJson(nicknameCursor);
-        this.nickname = nicknameCursorJson["data1"];
+        if(nicknameCursor.getCount() > 0){
+            nicknameCursor.moveToFirst();   
+            var nicknameCursorJson = androidHelper.convertNativeCursorToJson(nicknameCursor);
+            this.nickname = nicknameCursorJson["data1"];
+        }
         nicknameCursor.close();
-        
+
         //Get phone
         var hasPhone = mainCursorJson["has_phone_number"];
         if(hasPhone === 1){
@@ -227,10 +226,11 @@ function User(){
                                                             android.provider.ContactsContract.Data.CONTENT_URI,
                                                             ["data1"],
                                                             notesParameters);
-        
-        notesCursor.moveToFirst();
-        var notesCursorJson = androidHelper.convertNativeCursorToJson(notesCursor);
-        this.notes = notesCursorJson["data1"];
+        if(notesCursor.getCount() > 0){
+            notesCursor.moveToFirst();
+            var notesCursorJson = androidHelper.convertNativeCursorToJson(notesCursor);
+            this.notes = notesCursorJson["data1"];
+        }
         notesCursor.close();
         
         //Get Websites
@@ -262,16 +262,17 @@ function User(){
                                                             android.provider.ContactsContract.Data.CONTENT_URI,
                                                             null,
                                                             orgParameters);
-        
-        orgCursor.moveToFirst();
-        var orgCursorJson = androidHelper.convertNativeCursorToJson(orgCursor);
-        this.organization.jobTitle = orgCursorJson["data4"];
-        this.organization.name = orgCursorJson["data1"];
-        this.organization.department = orgCursorJson["data5"];
-        this.organization.symbol = orgCursorJson["data7"];
-        this.organization.phonetic = orgCursorJson["data8"];
-        this.organization.location = orgCursorJson["data9"];
-        this.organization.type = androidHelper.getOrgType(orgCursorJson["data2"], orgCursorJson["data3"]);
+        if(orgCursor.getCount() > 0){
+            orgCursor.moveToFirst();
+            var orgCursorJson = androidHelper.convertNativeCursorToJson(orgCursor);
+            this.organization.jobTitle = orgCursorJson["data4"];
+            this.organization.name = orgCursorJson["data1"];
+            this.organization.department = orgCursorJson["data5"];
+            this.organization.symbol = orgCursorJson["data7"];
+            this.organization.phonetic = orgCursorJson["data8"];
+            this.organization.location = orgCursorJson["data9"];
+            this.organization.type = androidHelper.getOrgType(orgCursorJson["data2"], orgCursorJson["data3"]);
+        }
         orgCursor.close();
         
     }
@@ -286,8 +287,5 @@ function User(){
         }
     }
 } 
-
-
-
 
 module.exports = User;
