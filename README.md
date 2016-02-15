@@ -1,7 +1,6 @@
 # NativeScript Contacts
 
-A NativeScript module providing easy access to iOS contact directory to pick a contact and return its data.
-* Android not built yet. Feel free 👊
+A NativeScript module providing easy access to iOS and Android contact directory to pick a contact and return its data.
 
 ## Installation
 
