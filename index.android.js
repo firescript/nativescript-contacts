@@ -37,7 +37,12 @@ exports.getContact = function() {
                                 android: mainCursor
                             });
                         } else {
-                            reject();
+                            return resolve({
+                                data: null,
+                                response: "cancelled",
+                                ios: null,
+                                android: null 
+                            });
                         }
                         break;
                     default:
