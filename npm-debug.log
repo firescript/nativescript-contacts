@@ -1,0 +1,107 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@2.14.7
+3 info using node@v4.2.2
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/steve/Dropbox/Projects/Plugins/Contacts/nativescript-contacts',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/steve/.npm/nativescript-contacts/1.1.0/package.tgz not in flight; packing
+9 verbose tar pack [ '/Users/steve/.npm/nativescript-contacts/1.1.0/package.tgz',
+9 verbose tar pack   '/Users/steve/Dropbox/Projects/Plugins/Contacts/nativescript-contacts' ]
+10 verbose tarball /Users/steve/.npm/nativescript-contacts/1.1.0/package.tgz
+11 verbose folder /Users/steve/Dropbox/Projects/Plugins/Contacts/nativescript-contacts
+12 info prepublish nativescript-contacts@1.1.0
+13 verbose addLocalTarball adding from inside cache /Users/steve/.npm/nativescript-contacts/1.1.0/package.tgz
+14 silly cache afterAdd nativescript-contacts@1.1.0
+15 verbose afterAdd /Users/steve/.npm/nativescript-contacts/1.1.0/package/package.json not in flight; writing
+16 verbose afterAdd /Users/steve/.npm/nativescript-contacts/1.1.0/package/package.json written
+17 silly publish { name: 'nativescript-contacts',
+17 silly publish   version: '1.1.0',
+17 silly publish   description: 'A NativeScript module providing easy access to iOS (and eventually android) contact directory to pick a contact and return its data.',
+17 silly publish   main: 'index.js',
+17 silly publish   repository:
+17 silly publish    { type: 'git',
+17 silly publish      url: 'git+https://github.com/firescript/nativescript-contacts.git' },
+17 silly publish   keywords:
+17 silly publish    [ 'NativeScript',
+17 silly publish      'Contacts',
+17 silly publish      'Address Book',
+17 silly publish      'Contact Directory' ],
+17 silly publish   author: { name: 'Ryan  Lebel', email: 'ryan@firescript.ca' },
+17 silly publish   contributors:
+17 silly publish    [ { name: 'Steve McNiven-Scott',
+17 silly publish        email: 'steve@sitefinitysteve.com',
+17 silly publish        url: 'https://github.com/sitefinitysteve' },
+17 silly publish      { name: 'Nathanael Anderson',
+17 silly publish        url: 'https://github.com/NathanaelA' },
+17 silly publish      { name: 'Peter Staev', url: 'https://github.com/PeterStaev' } ],
+17 silly publish   license:
+17 silly publish    { type: 'MIT',
+17 silly publish      url: 'https://github.com/firescript/nativescript-contacts/blob/master/LICENSE' },
+17 silly publish   bugs: { url: 'https://github.com/firescript/nativescript-contacts/issues' },
+17 silly publish   homepage: 'https://github.com/firescript/nativescript-contacts',
+17 silly publish   nativescript: {},
+17 silly publish   readme: '# NativeScript Contacts\n\nA NativeScript module providing easy access to iOS and Android contact directory to pick a contact and return its data.\n\n## Installation\n\nRun `tns plugin add nativescript-contacts`\n\n## Usage\n\nTo use the messenger module you must first `require()` it.\n\n```js\nvar contacts = require( "nativescript-contacts" );\n```\n\n### Methods\n\n####getContact: Pick one contact and bring back its data.\n\n```js\nvar app = require( "application" );\nvar contacts = require( "nativescript-contacts" );\n\ncontacts.getContact().then(function(args){\n    /// Returns args:\n    /// args.data: Generic cross platform JSON object\n    /// args.ios: Raw iOS object before conversion\n    /// args.android.cursor: Raw Android object before conversion\n    /// args.android.data: JSONified cursor \n    \n    var contact = args.data; //See data structure below\n    \n    // lets say you wanted to grab first name and last name\n    console.log(contact.name.given + " " + contact.name.family);\n    \n    //lets say you want to get the phone numbers\n    contact.phoneNumbers.forEach(function(phone){\n        console.log(phone.value);\n    });\n\n    //lets say you want to get the addresses\n    contact.postalAddresses.forEach(function(address){\n        console.log(address.location.street);\n    });\n});\n```\n\n### Single User Data Structure\n```js\n    id : "";\n    name = {\n        given: "",\n        middle: "",\n        family: "",\n        prefix: "",\n        suffix: "",\n        displayname: "",\n        phonetic : {\n            given: "",\n            middle: "",\n            family: ""   \n        }\n    }\n    \n    jobTitle : "",\n    nickname : "",\n    department : "",\n    organization : "",\n    notes : "",\n\n    phoneNumbers : [], \n    emailAddresses : [],\n    postalAddresses : [],\n    urls : []\n```\n\n### PhoneNumber structure\n``` js\n{\n    id: "",\n    label: "",\n    value: ""\n}\n```\n\n### EmailAddress structure\n``` js\n{\n    id: "",\n    label: "",\n    value: ""\n}\n```\n\n### Url structure\n``` js\n{\n    label: "",\n    value: ""\n}\n```\n\n### PostalAddress structure\n``` js\n{\n    id: "",\n    label: "",\n    location: {\n        street: "",\n        city: "",\n        state: "",\n        postalCode: "",\n        country: "",\n        countryCode: "",\n    }\n}\n```\n\n### iOS\nSee apples docs on properties available: \nhttps://developer.apple.com/library/mac/documentation/Contacts/Reference/CNContact_Class/index.html#//apple_ref/occ/cl/CNContact\n',
+17 silly publish   readmeFilename: 'README.md',
+17 silly publish   gitHead: '4f6efcc3e54b3d5045d7e39b1ba77a4ec524e2b8',
+17 silly publish   _id: 'nativescript-contacts@1.1.0',
+17 silly publish   scripts: {},
+17 silly publish   _shasum: '42e903acd259c704f143f17236d4e70e676b0516',
+17 silly publish   _from: '.' }
+18 verbose getPublishConfig undefined
+19 silly mapToRegistry name nativescript-contacts
+20 silly mapToRegistry using default registry
+21 silly mapToRegistry registry https://registry.npmjs.org/
+22 silly mapToRegistry uri https://registry.npmjs.org/nativescript-contacts
+23 verbose publish registryBase https://registry.npmjs.org/
+24 silly publish uploading /Users/steve/.npm/nativescript-contacts/1.1.0/package.tgz
+25 verbose request uri https://registry.npmjs.org/nativescript-contacts
+26 verbose request sending authorization for write operation
+27 info attempt registry request try #1 at 11:22:38 AM
+28 verbose request using bearer token for auth
+29 verbose request id b7fde7558a0f7a21
+30 http request PUT https://registry.npmjs.org/nativescript-contacts
+31 http 403 https://registry.npmjs.org/nativescript-contacts
+32 verbose headers { 'content-type': 'application/json',
+32 verbose headers   'cache-control': 'max-age=300',
+32 verbose headers   'content-length': '95',
+32 verbose headers   'accept-ranges': 'bytes',
+32 verbose headers   date: 'Fri, 19 Feb 2016 16:22:39 GMT',
+32 verbose headers   via: '1.1 varnish',
+32 verbose headers   connection: 'keep-alive',
+32 verbose headers   'x-served-by': 'cache-ord1721-ORD',
+32 verbose headers   'x-cache': 'MISS',
+32 verbose headers   'x-cache-hits': '0',
+32 verbose headers   'x-timer': 'S1455898958.795184,VS0,VE1195' }
+33 verbose request invalidating /Users/steve/.npm/registry.npmjs.org/nativescript-contacts on PUT
+34 error publish Failed PUT 403
+35 verbose stack Error: "You cannot publish over the previously published version 1.1.0." : nativescript-contacts
+35 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+35 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+35 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+35 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:198:22)
+35 verbose stack     at emitTwo (events.js:87:13)
+35 verbose stack     at Request.emit (events.js:172:7)
+35 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1063:14)
+35 verbose stack     at emitOne (events.js:82:20)
+35 verbose stack     at Request.emit (events.js:169:7)
+35 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1009:12)
+36 verbose statusCode 403
+37 verbose pkgid nativescript-contacts
+38 verbose cwd /Users/steve/Dropbox/Projects/Plugins/Contacts/nativescript-contacts
+39 error Darwin 15.3.0
+40 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "publish"
+41 error node v4.2.2
+42 error npm  v2.14.7
+43 error code E403
+44 error "You cannot publish over the previously published version 1.1.0." : nativescript-contacts
+45 error If you need help, you may report this error at:
+45 error     <https://github.com/npm/npm/issues>
+46 verbose exit [ 1, true ]
