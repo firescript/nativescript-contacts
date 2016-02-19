@@ -1,5 +1,5 @@
 var frameModule = require("ui/frame");
-var UserModel = require("./userModel");
+var Contact = require("./contact-model");
 
 var CustomCNContactPickerViewControllerDelegate = NSObject.extend({    
     initWithResolveReject: function(resolve, reject) {
@@ -22,11 +22,11 @@ var CustomCNContactPickerViewControllerDelegate = NSObject.extend({
         controller.dismissModalViewControllerAnimated(true);
         
         //Convert the native contact object
-        var user = new UserModel();
-        user.initalizeiOS(contact);
+        var contactModel = new Contact();
+        contactModel.initializeFromNative(contact);
         
         this.resolve({
-            data: user,
+            data: contactModel,
             response: "selected",
             ios: contact,
             android: null

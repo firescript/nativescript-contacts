@@ -1,5 +1,5 @@
 var appModule = require("application");
-var UserModel = require("./userModel");
+var Contact = require("./contact-model");
 
 exports.getContact = function() {
     return new Promise(function(resolve, reject) {
@@ -27,11 +27,11 @@ exports.getContact = function() {
                             }
 
                             //Convert the native contact object
-                            var user = new UserModel();
-                            user.initalizeAndroid(mainCursor);
+                            var contactModel = new Contact();
+                            contactModel.initializeFromNative(mainCursor);
         
                             return resolve({
-                                data: user,
+                                data: contactModel,
                                 response: "selected",
                                 ios: null,
                                 android: mainCursor
