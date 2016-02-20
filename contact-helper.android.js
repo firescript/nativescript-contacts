@@ -1,9 +1,39 @@
 
 var appModule = require("application");
 
+/* missing constants from the {N} */
+var TYPE_CUSTOM = 0;
+
+var KnownLabel = {
+    HOME: "Home",
+    MOBILE: "Mobile",
+    WORK: "Work",
+    FAX_WORK: "Fax Work",
+    FAX_HOME: "Fax Home", 
+    PAGER: "Pager",
+    CALLBACK: "Callback", 
+    CAR: "Car",
+    COMPANY_NAME: "Company Main",
+    ISDN: "ISDN",
+    MAIN: "Main",
+    OTHER_FAX: "Other Fax",
+    RADIO: "Radio",
+    TELEX: "Telex",
+    TTY_TDD: "TTY TDD",
+    WORK_MOBILE: "Work Mobile",
+    WORK_PAGER: "Work Pager",
+    ASSISTANT: "Assistant",
+    MMS: "MMS",
+    OTHER: "Other", 
+    FTP: "FTP",
+    PROFILE: "Profile",
+    BLOG: "Blog",
+    HOMEPAGE: "Homepage"
+};
+
+
 //Query Sample: 
 //query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
-
 exports.getBasicCursor = function(uri, id){
     var contentResolver = appModule.android.context.getContentResolver(); 
     var cursor = contentResolver.query(uri, 
@@ -14,8 +44,7 @@ exports.getBasicCursor = function(uri, id){
     //cursor.moveToFirst();
     
     return cursor;
-}
-
+};
 
 //projection: String[]
 //parameters: String[]
@@ -28,54 +57,88 @@ exports.getComplexCursor = function(id, uri, projection, parameters){
                                     null);
                          
     return cursor;
-}
-
-
+};
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Email.html
-exports.getEmailType = function(data2, data3){
+exports.getEmailType = function(data2, data3) {
     var typeInt = data2;
     var typeConverted = "";
     
-    switch(typeInt){
-        case "0": //TYPE_CUSTOM
+    switch(typeInt) {
+        case TYPE_CUSTOM:
             typeConverted = data3; //LABEL
             break;
-        case "1":
-            typeConverted = "Home"; //TYPE_HOME
+        case android.provider.ContactsContract.CommonDataKinds.Email.TYPE_HOME:
+            typeConverted = KnownLabel.HOME;
             break;
-        case "2":
-            typeConverted = "Work"; //TYPE_WORK
+        case android.provider.ContactsContract.CommonDataKinds.Email.TYPE_WORK:
+            typeConverted = KnownLabel.WORK;
             break;
-        case "3":
-            typeConverted = "Other"; //TYPE_OTHER
+        case android.provider.ContactsContract.CommonDataKinds.Email.TYPE_OTHER:
+            typeConverted = KnownLabel.OTHER;
             break;
-        case "4":
-            typeConverted = "Mobile"; //TYPE_MOBILE
+        case android.provider.ContactsContract.CommonDataKinds.Email.TYPE_MOBILE:
+            typeConverted = KnownLabel.MOBILE;
             break;
     }
     
     return typeConverted;
-}
+};
+
+exports.getNativeEmailType = function (label) {
+    var nativeType = TYPE_CUSTOM;
+
+    switch (label) {
+        case KnownLabel.HOME:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Email.TYPE_HOME;
+            break;
+        case KnownLabel.WORK:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Email.TYPE_WORK;
+            break;
+        case KnownLabel.OTHER:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Email.TYPE_OTHER;
+            break;
+        case KnownLabel.MOBILE:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Email.TYPE_MOBILE;
+            break;
+    }
+
+    return nativeType;
+};
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Organization.html
 exports.getOrgType = function(data2, data3){
     var typeInt = data2;
     var typeConverted = "";
     switch(typeInt){
-        case "0": //TYPE_CUSTOM
+        case TYPE_CUSTOM:
             typeConverted = data3; //LABEL
             break;
-        case "1":
-            typeConverted = "Work"; //TYPE_WORK
+        case android.provider.ContactsContract.CommonDataKinds.Organization.TYPE_WORK:
+            typeConverted = KnownLabel.WORK;
             break;
-        case "2":
-            typeConverted = "Other"; //TYPE_OTHER
+        case android.provider.ContactsContract.CommonDataKinds.Organization.TYPE_OTHER:
+            typeConverted = KnownLabel.OTHER;
             break;
     }
     
     return typeConverted;
-}
+};
+
+exports.getNativeOrgType = function (label) {
+    var nativeType = TYPE_CUSTOM;
+
+    switch (label) {
+        case KnownLabel.WORK:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Organization.TYPE_WORK;
+            break;
+        case KnownLabel.OTHER:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Organization.TYPE_OTHER;
+            break;
+    };
+
+    return nativeType;
+};
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Website.html
 exports.getWebsiteType = function(data2, data3){
@@ -83,34 +146,64 @@ exports.getWebsiteType = function(data2, data3){
     var typeConverted = "";
     
     switch(typeInt){
-        case "0": //TYPE_CUSTOM
+        case TYPE_CUSTOM:
             typeConverted = data3; //LABEL
             break;
-        case "1":
-            typeConverted = "Homepage"; //TYPE_HOMEPAGE
+        case android.provider.ContactsContract.CommonDataKinds.Website.TYPE_HOMEPAGE:
+            typeConverted = KnownLabel.HOMEPAGE;
             break;
-        case "2":
-            typeConverted = "Blog"; //TYPE_BLOG
+        case android.provider.ContactsContract.CommonDataKinds.Website.TYPE_BLOG:
+            typeConverted = KnownLabel.BLOG;
             break;
-        case "3":
-            typeConverted = "Profile"; //TYPE_PROFILE
+        case android.provider.ContactsContract.CommonDataKinds.Website.TYPE_PROFILE:
+            typeConverted = KnownLabel.PROFILE;
             break;
-        case "4":
-            typeConverted = "Home"; //TYPE_HOME
+        case android.provider.ContactsContract.CommonDataKinds.Website.TYPE_HOME:
+            typeConverted = KnownLabel.HOME;
             break;
-        case "5":
-            typeConverted = "Work"; //TYPE_WORK
+        case android.provider.ContactsContract.CommonDataKinds.Website.TYPE_WORK:
+            typeConverted = KnownLabel.WORK;
             break;
-        case "6":
-            typeConverted = "FTP"; //TYPE_FTP
+        case android.provider.ContactsContract.CommonDataKinds.Website.TYPE_FTP:
+            typeConverted = KnownLabel.FTP;
             break;
-        case "7":
-            typeConverted = "Other"; //TYPE_OTHER
+        case android.provider.ContactsContract.CommonDataKinds.Website.TYPE_OTHER:
+            typeConverted = KnownLabel.OTHER;
             break;
     }
     
     return typeConverted;
-}
+};
+
+exports.getNativeWebsiteType = function (label) {
+    var nativeType = TYPE_CUSTOM;
+
+    switch (label) {
+        case KnownLabel.HOMEPAGE:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Website.TYPE_HOMEPAGE;
+            break;
+        case KnownLabel.BLOG:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Website.TYPE_BLOG;
+            break;
+        case KnownLabel.PROFILE:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Website.TYPE_PROFILE;
+            break;
+        case KnownLabel.HOME:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Website.TYPE_HOME;
+            break;
+        case KnownLabel.WORK:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Website.TYPE_WORK;
+            break;
+        case KnownLabel.FTP:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Website.TYPE_FTP;
+            break;
+        case KnownLabel.OTHER:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Website.TYPE_OTHER;
+            break;
+    }
+
+    return nativeType;
+};
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Email.html
 exports.getAddressType = function(data2, data3){
@@ -118,22 +211,40 @@ exports.getAddressType = function(data2, data3){
     var typeConverted = "";
     
     switch(typeInt){
-        case "0": //TYPE_CUSTOM
+        case TYPE_CUSTOM:
             typeConverted = data3; //LABEL
             break;
-        case "1":
-            typeConverted = "Home"; //TYPE_HOME
+        case android.provider.ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME:
+            typeConverted = KnownLabel.HOME;
             break;
-        case "2":
-            typeConverted = "Work"; //TYPE_WORK
+        case android.provider.ContactsContract.CommonDataKinds.StructuredPostal.TYPE_WORK:
+            typeConverted = KnownLabel.WORK;
             break;
-        case "3":
-            typeConverted = "Other"; //TYPE_OTHER
+        case android.provider.ContactsContract.CommonDataKinds.StructuredPostal.TYPE_OTHER:
+            typeConverted = KnownLabel.OTHER;
             break;
     }
     
     return typeConverted;
-}
+};
+
+exports.getNativeAddressType = function (label) {
+    var nativeType = TYPE_CUSTOM;
+
+    switch (label) {
+        case KnownLabel.HOME:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME;
+            break;
+        case KnownLabel.WORK:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.StructuredPostal.TYPE_WORK;
+            break;
+        case KnownLabel.OTHER:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.StructuredPostal.TYPE_OTHER;
+            break;
+    }
+
+    return nativeType;
+};
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Phone.html
 exports.getPhoneType = function(data2, data3){
@@ -141,74 +252,146 @@ exports.getPhoneType = function(data2, data3){
     var typeConverted = "";
     
     switch(typeInt){
-        case "1":
-            typeConverted = "Home"; //TYPE_HOME
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+            typeConverted = KnownLabel.HOME;
             break;
-        case "2":
-            typeConverted = "Mobile"; //TYPE_MOBILE
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+            typeConverted = KnownLabel.MOBILE;
             break;
-        case "3":
-            typeConverted = "Work"; //TYPE_WORK
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+            typeConverted = KnownLabel.WORK;
             break;
-        case "4":
-            typeConverted = "Fax Work"; //TYPE_FAX_WORK
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
+            typeConverted = KnownLabel.FAX_WORK;
             break;
-        case "5":
-            typeConverted = "Fax Home"; //TYPE_FAX_HOME
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
+            typeConverted = KnownLabel.FAX_HOME;
             break;
-        case "6": 
-            typeConverted = "Pager"; //TYPE_PAGER
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_PAGER: 
+            typeConverted = KnownLabel.PAGER;
             break;
-        case "7": 
-            typeConverted = data3; //TYPE_OTHER, Use LABEL
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
+            typeConverted = KnownLabel.OTHER;
             break;
-        case "8":
-            typeConverted = "Callback"; //TYPE_CALLBACK
+        case TYPE_CUSTOM:
+            typeConverted = data3; //Use LABEL
             break;
-        case "9":
-            typeConverted = "Car"; //TYPE_CAR
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
+            typeConverted = KnownLabel.CALLBACK;
             break;
-        case "10":
-            typeConverted = "Company Main"; //TYPE_COMPANY_MAIN
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
+            typeConverted = KnownLabel.CAR;
             break;
-        case "11":
-            typeConverted = "ISDN"; //TYPE_ISDN
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
+            typeConverted = KnownLabel.COMPANY_NAME;
             break;
-        case "12":
-            typeConverted = "Main"; //TYPE_MAIN
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
+            typeConverted = KnownLabel.ISDN;
             break;
-        case "13":
-            typeConverted = "Other Fax"; //TYPE_OTHER_FAX
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
+            typeConverted = KnownLabel.MAIN;
             break;
-        case "14":
-            typeConverted = "Radio"; //TYPE_RADIO
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
+            typeConverted = KnownLabel.OTHER_FAX;
             break;
-        case "15":
-            typeConverted = "Telex"; //TYPE_TELEX
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
+            typeConverted = KnownLabel.RADIO;
             break;
-        case "16":
-            typeConverted = "TTY TDD"; //TYPE_TTY_TDD
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
+            typeConverted = KnownLabel.TELEX;
             break;
-        case "17":
-            typeConverted = "Work Mobile"; //TYPE_WORK_MOBILE
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
+            typeConverted = KnownLabel.TTY_TDD;
             break;
-        case "18":
-            typeConverted = "Work Pager"; //TYPE_WORK_PAGER
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
+            typeConverted = KnownLabel.WORK_MOBILE;
             break;
-        case "19":
-            typeConverted = "Assistant"; //TYPE_ASSISTANT
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
+            typeConverted = KnownLabel.WORK_PAGER;
             break;
-        case "20":
-            typeConverted = "MMS"; //TYPE_MMS
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
+            typeConverted = KnownLabel.ASSISTANT;
+            break;
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
+            typeConverted = KnownLabel.MMS;
             break;
     }
     
     return typeConverted;
-}
+};
+
+exports.getNativePhoneType = function (label) {
+    var nativeType = TYPE_CUSTOM;
+
+    switch (label) {
+        case KnownLabel.HOME:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_HOME;
+            break;
+        case KnownLabel.MOBILE:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE;
+            break;
+        case KnownLabel.WORK:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_WORK;
+            break;
+        case KnownLabel.FAX_WORK:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK;
+            break;
+        case KnownLabel.FAX_HOME:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME;
+            break;
+        case KnownLabel.PAGER:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_PAGER;
+            break;
+        case KnownLabel.OTHER:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_OTHER;
+            break;
+        case KnownLabel.CALLBACK:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK;
+            break;
+        case KnownLabel.CAR:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_CAR;
+            break;
+        case KnownLabel.COMPANY_NAME:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN;
+            break;
+        case KnownLabel.ISDN:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_ISDN;
+            break;
+        case KnownLabel.MAIN:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_MAIN;
+            break;
+        case KnownLabel.OTHER_FAX:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX;
+            break;
+        case KnownLabel.RADIO:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_RADIO;
+            break;
+        case KnownLabel.TELEX:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_TELEX;
+            break;
+        case KnownLabel.TTY_TDD:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD;
+            break;
+        case KnownLabel.WORK_MOBILE:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE;
+            break;
+        case KnownLabel.WORK_PAGER:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER;
+            break;
+        case KnownLabel.ASSISTANT:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT;
+            break;
+        case KnownLabel.MMS:
+            nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_MMS;
+            break;
+    }
+    
+    return nativeType;
+};
 
 exports.getAvatar = function(){
     return "android Image";
-}
+};
 
 exports.convertNativeCursorToJson = function(cursor) {
     //noinspection JSUnresolvedFunction
@@ -244,4 +427,4 @@ exports.convertNativeCursorToJson = function(cursor) {
     }
 
     return results;
-}
+};

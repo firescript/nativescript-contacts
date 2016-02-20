@@ -36,6 +36,10 @@ var Contact = (function () {
         // Abstract Method
     };
 
+    Contact.prototype.save = function() {
+        // Abstract Method
+    };
+    
     /// TODO: NOT FUNCTIONAL ATM
     Contact.prototype.getAvatar = function(){
         return helper.getAvatar();

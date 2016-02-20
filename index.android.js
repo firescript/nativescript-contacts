@@ -61,3 +61,5 @@ exports.getContact = function() {
         }
     });
 }
+
+exports.Contact = Contact;

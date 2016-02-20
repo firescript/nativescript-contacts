@@ -1,5 +1,15 @@
 var helper = require("./contact-helper");
+var appModule = require("application");
 var ContactCommon = require("./contact-model-common");
+
+/* missing constants from the {N} */
+var ACCOUNT_TYPE = "account_type"; // android.provider.ContactsContract.RawContacts.ACCOUNT_TYPE
+var ACCOUNT_NAME = "account_name"; // android.provider.ContactsContract.RawContacts.ACCOUNT_NAME
+var RAW_CONTACT_ID = "raw_contact_id"; // android.provider.ContactsContract.Data.RAW_CONTACT_ID
+var MIMETYPE = "mimetype"; // android.provider.ContactsContract.Data.MIMETYPE
+var DATA = "data1"; // android.provider.ContactsContract.CommonDataKinds.Email.DATA
+var TYPE = "data2"; // android.provider.ContactsContract.CommonDataKinds.Phone.TYPE / android.provider.ContactsContract.CommonDataKinds.Email.TYPE / android.provider.ContactsContract.CommonDataKinds.StructuredPostal.TYPE
+var LABEL = "data3";
 
 var Contact = (function (_super) {
     global.__extends(Contact, _super);
@@ -97,14 +107,14 @@ var Contact = (function (_super) {
                 id: postalCursorJson["_id"],
                 label: helper.getAddressType(postalCursorJson["data2"], postalCursorJson["data3"]),
                 location: {
-                            street: postalCursorJson["data4"],
-                            city: postalCursorJson["data7"],
-                            state: postalCursorJson[""],
-                            postalCode: postalCursorJson["data9"],
-                            country: postalCursorJson["data10"],
-                            countryCode: postalCursorJson[""],
-                            formatted: postalCursorJson["data1"]
-                        }
+                    street: postalCursorJson["data4"],
+                    city: postalCursorJson["data7"],
+                    state: postalCursorJson["data8"],
+                    postalCode: postalCursorJson["data9"],
+                    country: postalCursorJson["data10"],
+                    countryCode: postalCursorJson[""],
+                    formatted: postalCursorJson["data1"]
+                }
             });
         };
         postalCursor.close();
@@ -167,6 +177,142 @@ var Contact = (function (_super) {
         }
         orgCursor.close();
     }
+
+    Contact.prototype.save = function() {
+        var mgr = android.accounts.AccountManager.get(appModule.android.foregroundActivity);
+        var accounts = mgr.getAccounts();
+        var accountName = null;
+        var accountType = null;
+
+        if (accounts.length === 0) {
+            throw new Error("No Accounts!");
+        }
+
+        accountName = accounts[0].name;
+        accountType = accounts[0].type;
+
+        if (this.id && this.id !== "") {
+            // TODO: Update existing contact
+        } 
+        else {
+            this._addNewContact(accountName, accountType);
+        }
+    };
+
+    Contact.prototype._addNewContact = function(accountName, accountType) {
+        // Create a list of attributes to add to the contact database
+        var ops = new java.util.ArrayList();
+
+        //Add contact type
+        ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.RawContacts.CONTENT_URI)
+                .withValue(ACCOUNT_TYPE, accountType)
+                .withValue(ACCOUNT_NAME, accountName)
+                .build()); 
+
+        // Add name
+        ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                .withValueBackReference(RAW_CONTACT_ID, 0)
+                .withValue(MIMETYPE, android.provider.ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, this.name.displayname)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, this.name.given)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, this.name.middle)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, this.name.family)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.PREFIX, this.name.prefix)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.SUFFIX, this.name.suffix)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME, this.name.phonetic.given)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME, this.name.phonetic.middle)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME, this.name.phonetic.family)
+                .build());
+
+        // Add Nickname
+        ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                .withValueBackReference(RAW_CONTACT_ID, 0)
+                .withValue(MIMETYPE, android.provider.ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Nickname.NAME, this.nickname)
+                .build());
+
+        // Add Phones
+        this.phoneNumbers.forEach(function (item) {
+            var nativePhoneType = helper.getNativePhoneType(item.label);
+
+            ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(RAW_CONTACT_ID, 0)
+                    .withValue(MIMETYPE, android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                    .withValue(TYPE, new java.lang.Integer(nativePhoneType))
+                    .withValue(LABEL, (nativePhoneType ? "" : item.label))
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER, item.value)
+                    .build());
+        });
+
+        // Add Emails
+        this.emailAddresses.forEach(function (item) {
+            var nativeEmailType = helper.getNativeEmailType(item.label);
+
+            ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(RAW_CONTACT_ID, 0)
+                    .withValue(MIMETYPE, android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                    .withValue(TYPE, new java.lang.Integer(nativeEmailType))
+                    .withValue(LABEL, (nativeEmailType ? "" : item.label))
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.Email.ADDRESS, item.value)
+                    .build());
+        });
+
+        // Add Addresses
+        this.postalAddresses.forEach(function (item) {
+            var nativeAddressType = helper.getNativeAddressType(item.label);
+
+            ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(RAW_CONTACT_ID, 0)
+                    .withValue(MIMETYPE, android.provider.ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)
+                    .withValue(TYPE, new java.lang.Integer(nativeAddressType))
+                    .withValue(LABEL, (nativeAddressType ? "" : item.label))
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.STREET, item.location.street)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.CITY, item.location.city)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.REGION, item.location.state)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, item.location.postalCode)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY, item.location.country)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, item.location.formatted)
+                    .build());
+        });
+
+        // Add Note
+        ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                .withValueBackReference(RAW_CONTACT_ID, 0)
+                .withValue(MIMETYPE, android.provider.ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Note.NOTE, this.notes)
+                .build());
+
+        // Add Websites
+        this.urls.forEach(function (item) {
+            var nativeWebsiteType = helper.getNativeWebsiteType(item.label);
+
+            ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(RAW_CONTACT_ID, 0)
+                    .withValue(MIMETYPE, android.provider.ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE)
+                    .withValue(TYPE, new java.lang.Integer(nativeWebsiteType))
+                    .withValue(LABEL, (nativeWebsiteType ? "" : item.label))
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.Website.URL, item.value)
+                    .build());
+        });
+        
+        // Add Organization
+        var nativeOrgType = helper.getNativeOrgType(this.organization.type);
+        ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                .withValueBackReference(RAW_CONTACT_ID, 0)
+                .withValue(MIMETYPE, android.provider.ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
+                .withValue(TYPE, new java.lang.Integer(nativeOrgType))
+                .withValue(LABEL, (nativeOrgType ? "" : this.organization.type))
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.DEPARTMENT, this.organization.department)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.COMPANY, this.organization.name)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.TITLE, this.organization.jobTitle)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.SYMBOL, this.organization.symbol)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.PHONETIC_NAME, this.organization.phonetic)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.OFFICE_LOCATION, this.organization.location)
+                .build());
+
+        // Perform the save
+        appModule.android.foregroundActivity.getContentResolver().applyBatch(android.provider.ContactsContract.AUTHORITY, ops);
+    };
 
     return Contact;
 })(ContactCommon);
