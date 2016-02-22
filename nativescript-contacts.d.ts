@@ -67,7 +67,8 @@ declare module "nativescript-contacts" {
     export interface GetContactResult {
         data: Contact;
         ios: any; // TODO: Change to CNContact once it is added to {N}'s .d.ts
-        android: android.database.Cursor
+        android: android.database.Cursor;
+        response: string; // "selected" or "cancelled"
     }
 
     export function getContact(): Promise<GetContactResult>;

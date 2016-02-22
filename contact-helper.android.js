@@ -3,6 +3,9 @@ var appModule = require("application");
 
 /* missing constants from the {N} */
 var TYPE_CUSTOM = 0;
+var RAW_CONTACT_ID = "raw_contact_id"; // android.provider.ContactsContract.Data.RAW_CONTACT_ID
+var CONTACT_ID = "contact_id"; // android.provider.ContactsContract.Data.CONTACT_ID
+var MIMETYPE = "mimetype"; // android.provider.ContactsContract.Data.MIMETYPE
 
 var KnownLabel = {
     HOME: "Home",
@@ -38,7 +41,7 @@ exports.getBasicCursor = function(uri, id){
     var contentResolver = appModule.android.context.getContentResolver(); 
     var cursor = contentResolver.query(uri, 
                                         null, 
-                                        "name_raw_contact_id=" + id,
+                                        CONTACT_ID + "=" + id,
                                         null, 
                                         null);
     //cursor.moveToFirst();
@@ -52,7 +55,7 @@ exports.getComplexCursor = function(id, uri, projection, parameters){
     var contentResolver = appModule.android.context.getContentResolver(); 
     var cursor = contentResolver.query(uri, 
                                     projection, 
-                                    "name_raw_contact_id=? AND mimetype=?",
+                                    CONTACT_ID + "=? AND " + MIMETYPE + "=?",
                                     parameters, 
                                     null);
                          
@@ -61,7 +64,7 @@ exports.getComplexCursor = function(id, uri, projection, parameters){
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Email.html
 exports.getEmailType = function(data2, data3) {
-    var typeInt = data2;
+    var typeInt = parseInt(data2, 10);
     var typeConverted = "";
     
     switch(typeInt) {
@@ -108,7 +111,7 @@ exports.getNativeEmailType = function (label) {
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Organization.html
 exports.getOrgType = function(data2, data3){
-    var typeInt = data2;
+    var typeInt = parseInt(data2, 10);
     var typeConverted = "";
     switch(typeInt){
         case TYPE_CUSTOM:
@@ -142,7 +145,7 @@ exports.getNativeOrgType = function (label) {
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Website.html
 exports.getWebsiteType = function(data2, data3){
-    var typeInt = data2;
+    var typeInt = parseInt(data2, 10);
     var typeConverted = "";
     
     switch(typeInt){
@@ -207,7 +210,7 @@ exports.getNativeWebsiteType = function (label) {
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Email.html
 exports.getAddressType = function(data2, data3){
-    var typeInt = data2;
+    var typeInt = parseInt(data2, 10);
     var typeConverted = "";
     
     switch(typeInt){
@@ -248,7 +251,7 @@ exports.getNativeAddressType = function (label) {
 
 //http://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Phone.html
 exports.getPhoneType = function(data2, data3){
-    var typeInt = data2;
+    var typeInt = parseInt(data2, 10);
     var typeConverted = "";
     
     switch(typeInt){
@@ -388,6 +391,43 @@ exports.getNativePhoneType = function (label) {
     
     return nativeType;
 };
+
+exports.getContactBuilder = function (id, mimetype) {
+    var builder;
+
+    if (id && id !== "") {
+        builder = android.content.ContentProviderOperation.newUpdate(android.provider.ContactsContract.Data.CONTENT_URI)
+                    .withSelection(CONTACT_ID + "=? AND " + MIMETYPE + "=?", [id.toString(), mimetype]);
+    }
+    else {
+        builder = android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(RAW_CONTACT_ID, 0)
+                    .withValue(MIMETYPE, mimetype);
+    }
+
+    return builder;
+};
+
+exports.getRawContactBuilder = function (rawId, mimetype, isDelete) {
+    var builder;
+
+    if (isDelete) {
+        builder = android.content.ContentProviderOperation.newDelete(android.provider.ContactsContract.Data.CONTENT_URI)
+                    .withSelection(RAW_CONTACT_ID + "=? AND " + MIMETYPE + "=?", [rawId, mimetype]);
+    }
+    else if (rawId) {
+        builder = android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                    .withValue(RAW_CONTACT_ID, rawId)
+                    .withValue(MIMETYPE, mimetype);
+    }
+    else {
+        builder = android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(RAW_CONTACT_ID, 0)
+                    .withValue(MIMETYPE, mimetype);
+    }
+
+    return builder;
+}
 
 exports.getAvatar = function(){
     return "android Image";
