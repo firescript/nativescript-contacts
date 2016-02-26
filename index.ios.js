@@ -1,7 +1,6 @@
 var frameModule = require("ui/frame");
-var common = require("./index-common");
-
-global.moduleMerge(common, exports);
+var Contact = require("./contact-model");
+var KnownLabel = require("./known-label");
 
 var CustomCNContactPickerViewControllerDelegate = NSObject.extend({    
     initWithResolveReject: function(resolve, reject) {
@@ -53,3 +52,4 @@ exports.getContact = function (){
 };
 
 exports.Contact = Contact;
+exports.KnownLabel = KnownLabel;
