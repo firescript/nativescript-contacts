@@ -1,4 +1,4 @@
-exports.KnownLabel = {
+module.exports = {
     HOME: "Home",
     MOBILE: "Mobile",
     WORK: "Work",
