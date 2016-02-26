@@ -1,39 +1,12 @@
 
 var appModule = require("application");
+var KnownLabel = require("./known-label");
 
 /* missing constants from the {N} */
 var TYPE_CUSTOM = 0;
 var RAW_CONTACT_ID = "raw_contact_id"; // android.provider.ContactsContract.Data.RAW_CONTACT_ID
 var CONTACT_ID = "contact_id"; // android.provider.ContactsContract.Data.CONTACT_ID
 var MIMETYPE = "mimetype"; // android.provider.ContactsContract.Data.MIMETYPE
-
-var KnownLabel = {
-    HOME: "Home",
-    MOBILE: "Mobile",
-    WORK: "Work",
-    FAX_WORK: "Fax Work",
-    FAX_HOME: "Fax Home", 
-    PAGER: "Pager",
-    CALLBACK: "Callback", 
-    CAR: "Car",
-    COMPANY_NAME: "Company Main",
-    ISDN: "ISDN",
-    MAIN: "Main",
-    OTHER_FAX: "Other Fax",
-    RADIO: "Radio",
-    TELEX: "Telex",
-    TTY_TDD: "TTY TDD",
-    WORK_MOBILE: "Work Mobile",
-    WORK_PAGER: "Work Pager",
-    ASSISTANT: "Assistant",
-    MMS: "MMS",
-    OTHER: "Other", 
-    FTP: "FTP",
-    PROFILE: "Profile",
-    BLOG: "Blog",
-    HOMEPAGE: "Homepage"
-};
-
 
 //Query Sample: 
 //query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)

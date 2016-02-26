@@ -64,6 +64,35 @@ declare module "nativescript-contacts" {
         public save();
     }
 
+    export interface KnownLabel {
+        HOME: string;
+        MOBILE: string;
+        WORK: string;
+        FAX_WORK: string;
+        FAX_HOME: string;
+        PAGER: string;
+        HOMEPAGE: string;
+        MAIN: string;
+        OTHER: string;
+        
+        // Android Specific                
+        CALLBACK: string;
+        CAR: string;
+        COMPANY_NAME: string;
+        ISDN: string;
+        OTHER_FAX: string;
+        RADIO: string;
+        TELEX: string;
+        TTY_TDD: string;
+        WORK_MOBILE: string;
+        WORK_PAGER: string;
+        ASSISTANT: string;
+        MMS: string;
+        FTP: string;
+        PROFILE: string;
+        BLOG: string;
+    }
+    
     export interface GetContactResult {
         data: Contact;
         ios: any; // TODO: Change to CNContact once it is added to {N}'s .d.ts

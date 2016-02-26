@@ -1,5 +1,7 @@
 var appModule = require("application");
-var Contact = require("./contact-model");
+var common = require("./index-common");
+
+global.moduleMerge(common, exports);
 
 exports.getContact = function() {
     return new Promise(function(resolve, reject) {
@@ -60,6 +62,4 @@ exports.getContact = function() {
             }
         }
     });
-}
-
-exports.Contact = Contact;
+};

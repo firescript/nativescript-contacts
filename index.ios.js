@@ -1,5 +1,7 @@
 var frameModule = require("ui/frame");
-var Contact = require("./contact-model");
+var common = require("./index-common");
+
+global.moduleMerge(common, exports);
 
 var CustomCNContactPickerViewControllerDelegate = NSObject.extend({    
     initWithResolveReject: function(resolve, reject) {
@@ -48,5 +50,6 @@ exports.getContact = function (){
         var page = frameModule.topmost().ios.controller;
         page.presentModalViewControllerAnimated(controller, true);
     });
-}
+};
 
+exports.Contact = Contact;
