@@ -40,5 +40,8 @@
     "url": "https://github.com/firescript/nativescript-contacts/issues"
   },
   "homepage": "https://github.com/firescript/nativescript-contacts",
-  "nativescript": {}
+  "nativescript": {},
+  "devDependencies": {
+      "tns-core-modules": "1.6.0"
+  }
 }
