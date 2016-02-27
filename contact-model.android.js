@@ -1,5 +1,12 @@
 var helper = require("./contact-helper");
+var appModule = require("application");
 var ContactCommon = require("./contact-model-common");
+
+/* missing constants from the {N} */
+var ACCOUNT_TYPE = "account_type"; // android.provider.ContactsContract.RawContacts.ACCOUNT_TYPE
+var ACCOUNT_NAME = "account_name"; // android.provider.ContactsContract.RawContacts.ACCOUNT_NAME
+var TYPE = "data2"; // android.provider.ContactsContract.CommonDataKinds.Phone.TYPE / android.provider.ContactsContract.CommonDataKinds.Email.TYPE / android.provider.ContactsContract.CommonDataKinds.StructuredPostal.TYPE
+var LABEL = "data3";
 
 var Contact = (function (_super) {
     global.__extends(Contact, _super);
@@ -14,10 +21,10 @@ var Contact = (function (_super) {
         this.organization.type = "";
     }
 
-    Contact.prototype.initializeFromNative = function(cursor) {
+    Contact.prototype.initializeFromNative = function (cursor) {
         var mainCursorJson = helper.convertNativeCursorToJson(cursor);
         this.id = mainCursorJson["_id"];
-               
+
         //Get Basic User Details
         var userNameParameters = [
             this.id.toString(),
@@ -27,7 +34,7 @@ var Contact = (function (_super) {
                                                     android.provider.ContactsContract.Data.CONTENT_URI,
                                                     null,
                                                     userNameParameters);
-        usernameCursor.moveToFirst();                                                     
+        usernameCursor.moveToFirst();
         var usernameCursorJson = helper.convertNativeCursorToJson(usernameCursor);
         this.name.given = usernameCursorJson["data2"];
         this.name.middle = usernameCursorJson["data5"];
@@ -35,12 +42,12 @@ var Contact = (function (_super) {
         this.name.prefix = usernameCursorJson["data4"];
         this.name.suffix = usernameCursorJson["data6"];
         this.name.displayname = usernameCursorJson["data1"];
-        
+
         this.name.phonetic.given = usernameCursorJson["data7"];
         this.name.phonetic.middle = usernameCursorJson["data8"];
         this.name.phonetic.family = usernameCursorJson["data9"];
         usernameCursor.close();
-        
+
         //Get Nickname
         var nickNameParameters = [
             this.id.toString(),
@@ -51,8 +58,8 @@ var Contact = (function (_super) {
                                                     android.provider.ContactsContract.Data.CONTENT_URI,
                                                     ["data1"],
                                                     nickNameParameters);
-        if(nicknameCursor.getCount() > 0){
-            nicknameCursor.moveToFirst();   
+        if (nicknameCursor.getCount() > 0) {
+            nicknameCursor.moveToFirst();
             var nicknameCursorJson = helper.convertNativeCursorToJson(nicknameCursor);
             this.nickname = nicknameCursorJson["data1"];
         }
@@ -60,9 +67,9 @@ var Contact = (function (_super) {
 
         //Get phone
         var hasPhone = mainCursorJson["has_phone_number"];
-        if(hasPhone === 1){
-            var phoneCursor= helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI, this.id);
-            while(phoneCursor.moveToNext()){
+        if (hasPhone === 1) {
+            var phoneCursor = helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI, this.id);
+            while (phoneCursor.moveToNext()) {
                 var phoneCursorJson = helper.convertNativeCursorToJson(phoneCursor);
                 this.phoneNumbers.push(
                     {
@@ -76,7 +83,7 @@ var Contact = (function (_super) {
 
         //Get email
         var emailCursor = helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_URI, this.id);
-        while(emailCursor.moveToNext()){
+        while (emailCursor.moveToNext()) {
             var emailCursorJson = helper.convertNativeCursorToJson(emailCursor);
             this.emailAddresses.push(
             {
@@ -86,29 +93,29 @@ var Contact = (function (_super) {
             });
         };
         emailCursor.close();
-   
+
         //Get addresses
         var postalCursor = helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI, this.id);
-        while(postalCursor.moveToNext()){
+        while (postalCursor.moveToNext()) {
             var postalCursorJson = helper.convertNativeCursorToJson(postalCursor);
-   
+
             this.postalAddresses.push(
             {
                 id: postalCursorJson["_id"],
                 label: helper.getAddressType(postalCursorJson["data2"], postalCursorJson["data3"]),
                 location: {
-                            street: postalCursorJson["data4"],
-                            city: postalCursorJson["data7"],
-                            state: postalCursorJson[""],
-                            postalCode: postalCursorJson["data9"],
-                            country: postalCursorJson["data10"],
-                            countryCode: postalCursorJson[""],
-                            formatted: postalCursorJson["data1"]
-                        }
+                    street: postalCursorJson["data4"],
+                    city: postalCursorJson["data7"],
+                    state: postalCursorJson["data8"],
+                    postalCode: postalCursorJson["data9"],
+                    country: postalCursorJson["data10"],
+                    countryCode: postalCursorJson[""],
+                    formatted: postalCursorJson["data1"]
+                }
             });
         };
         postalCursor.close();
-        
+
         //Get Notes
         var notesParameters = [
             this.id.toString(),
@@ -118,13 +125,13 @@ var Contact = (function (_super) {
                                                             android.provider.ContactsContract.Data.CONTENT_URI,
                                                             ["data1"],
                                                             notesParameters);
-        if(notesCursor.getCount() > 0){
+        if (notesCursor.getCount() > 0) {
             notesCursor.moveToFirst();
             var notesCursorJson = helper.convertNativeCursorToJson(notesCursor);
             this.notes = notesCursorJson["data1"];
         }
         notesCursor.close();
-        
+
         //Get Websites
         var websitesParameters = [
             this.id.toString(),
@@ -134,9 +141,9 @@ var Contact = (function (_super) {
                                                             android.provider.ContactsContract.Data.CONTENT_URI,
                                                             null,
                                                             websitesParameters);
-        while(websitesCursor.moveToNext()){
+        while (websitesCursor.moveToNext()) {
             var websitesCursorJson = helper.convertNativeCursorToJson(websitesCursor);
-   
+
             this.urls.push(
             {
                 label: helper.getWebsiteType(websitesCursorJson["data2"], websitesCursorJson["data3"]),
@@ -144,7 +151,7 @@ var Contact = (function (_super) {
             });
         };
         websitesCursor.close();
-        
+
         //Get Organization
         var orgParameters = [
             this.id.toString(),
@@ -154,7 +161,7 @@ var Contact = (function (_super) {
                                                 android.provider.ContactsContract.Data.CONTENT_URI,
                                                 null,
                                                 orgParameters);
-        if(orgCursor.getCount() > 0){
+        if (orgCursor.getCount() > 0) {
             orgCursor.moveToFirst();
             var orgCursorJson = helper.convertNativeCursorToJson(orgCursor);
             this.organization.jobTitle = orgCursorJson["data4"];
@@ -167,6 +174,152 @@ var Contact = (function (_super) {
         }
         orgCursor.close();
     }
+
+    Contact.prototype.save = function () {
+        var mgr = android.accounts.AccountManager.get(appModule.android.foregroundActivity);
+        var accounts = mgr.getAccounts();
+        var accountName = null;
+        var accountType = null;
+        var id = this.id;
+        var rawId = 0;
+        var contentResolver = appModule.android.foregroundActivity.getContentResolver();
+        var ops = new java.util.ArrayList();
+
+        if (accounts.length === 0) {
+            throw new Error("No Accounts!");
+        }
+
+        accountName = accounts[0].name;
+        accountType = accounts[0].type;
+
+        if (id && id !== "") {
+            var rawIdCursor = contentResolver.query(android.provider.ContactsContract.RawContacts.CONTENT_URI,
+                                                    ["_id"],
+                                                    "contact_id = " + id,
+                                                    null,
+                                                    null)
+            if (!rawIdCursor.moveToFirst()) {
+                throw new Error("Error optaining raw contact id");
+                return;
+            }
+
+            rawId = rawIdCursor.getString(rawIdCursor.getColumnIndex("_id"));
+            rawIdCursor.close();
+
+            ops.add(android.content.ContentProviderOperation.newUpdate(android.provider.ContactsContract.RawContacts.CONTENT_URI)
+                    .withValue(ACCOUNT_TYPE, accountType)
+                    .withValue(ACCOUNT_NAME, accountName)
+                    .build());
+
+            // If existing contact, since we do not know which sub-data exactly was deleted, remove all and then it will be added again below. 
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE, true)
+                    .build());
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE, true)
+                    .build());
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE, true)
+                    .build());
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE, true)
+                    .build());
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE, true)
+                    .build());
+        }
+        else {
+            ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.RawContacts.CONTENT_URI)
+                    .withValue(ACCOUNT_TYPE, accountType)
+                    .withValue(ACCOUNT_NAME, accountName)
+                    .build());
+        }
+
+        // Add/Update Names
+        ops.add(helper.getContactBuilder(id, android.provider.ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, this.name.displayname)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, this.name.given)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, this.name.middle)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, this.name.family)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.PREFIX, this.name.prefix)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.SUFFIX, this.name.suffix)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME, this.name.phonetic.given)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME, this.name.phonetic.middle)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME, this.name.phonetic.family)
+                .build());
+
+        // Add/Update Nickname
+        ops.add(helper.getContactBuilder(id, android.provider.ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Nickname.NAME, this.nickname)
+                .build());
+
+
+        // Add Phones
+        this.phoneNumbers.forEach(function (item) {
+            var nativePhoneType = helper.getNativePhoneType(item.label);
+
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                    .withValue(TYPE, new java.lang.Integer(nativePhoneType))
+                    .withValue(LABEL, (nativePhoneType ? "" : item.label))
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER, item.value)
+                    .build());
+        });
+
+        // Add Emails
+        this.emailAddresses.forEach(function (item) {
+            var nativeEmailType = helper.getNativeEmailType(item.label);
+
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                    .withValue(TYPE, new java.lang.Integer(nativeEmailType))
+                    .withValue(LABEL, (nativeEmailType ? "" : item.label))
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.Email.ADDRESS, item.value)
+                    .build());
+        });
+
+        // Add Addresses
+        this.postalAddresses.forEach(function (item) {
+            var nativeAddressType = helper.getNativeAddressType(item.label);
+
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)
+                    .withValue(TYPE, new java.lang.Integer(nativeAddressType))
+                    .withValue(LABEL, (nativeAddressType ? "" : item.label))
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.STREET, item.location.street)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.CITY, item.location.city)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.REGION, item.location.state)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, item.location.postalCode)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY, item.location.country)
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, item.location.formatted)
+                    .build());
+        });
+
+        // Add/Update Note
+        ops.add(helper.getContactBuilder(id, android.provider.ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Note.NOTE, this.notes)
+                .build());
+
+
+        // Add Websites
+        this.urls.forEach(function (item) {
+            var nativeWebsiteType = helper.getNativeWebsiteType(item.label);
+
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE)
+                    .withValue(TYPE, new java.lang.Integer(nativeWebsiteType))
+                    .withValue(LABEL, (nativeWebsiteType ? "" : item.label))
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.Website.URL, item.value)
+                    .build());
+        });
+
+        // Add Organization
+        var nativeOrgType = helper.getNativeOrgType(this.organization.type);
+        ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
+                .withValue(TYPE, new java.lang.Integer(nativeOrgType))
+                .withValue(LABEL, (nativeOrgType ? "" : this.organization.type))
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.DEPARTMENT, this.organization.department)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.COMPANY, this.organization.name)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.TITLE, this.organization.jobTitle)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.SYMBOL, this.organization.symbol)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.PHONETIC_NAME, this.organization.phonetic)
+                .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.OFFICE_LOCATION, this.organization.location)
+                .build());
+
+        // Perform the save
+        contentResolver.applyBatch(android.provider.ContactsContract.AUTHORITY, ops);
+    };
 
     return Contact;
 })(ContactCommon);

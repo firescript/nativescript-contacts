@@ -6,56 +6,98 @@ declare module "nativescript-contacts" {
     }
 
     export interface AddressLocation {
-        street: string;
-        city: string;
-        state: string;
-        postalCode: string;
-        country: string;
-        countryCode: string;
+        street?: string;
+        city?: string;
+        state?: string;
+        postalCode?: string;
+        country?: string;
+        countryCode?: string;
+        formatted?: string;
     }
 
     export interface ContactAddressField {
-        id: string;
+        id?: string;
         label: string;
         location: AddressLocation;
     }
 
     export interface ContactPhoneticName {
-        given: string;
-        middle: string;
-        family: string;
+        given?: string;
+        middle?: string;
+        family?: string;
     }
 
     export interface ContactName {
-        given: string;
-        middle: string;
-        family: string;
-        prefix: string;
-        suffix: string;
-        displayname: string;
-        phonetic: ContactPhoneticName
+        given?: string;
+        middle?: string;
+        family?: string;
+        prefix?: string;
+        suffix?: string;
+        displayname?: string;
+        phonetic?: ContactPhoneticName
     }
 
-    export interface Contact {
+    export interface Organization {
+        name?: string;
+        jobTitle?: string;
+        department?: string;
+
+        // Android Specific
+        symbol?: string;
+        phonetic?: string;
+        location?: string;
+        type?: string;
+    }
+
+    export class Contact {
         id: string;
         name: ContactName;
-
-        jobTitle: string;
         nickname: string;
-        department: string;
-        organization: string;
+        organization: Organization;
         notes: string;
 
         phoneNumbers: ContactField[];
         emailAddresses: ContactField[];
         postalAddresses: ContactAddressField[];
         urls: ContactField[];
+
+        public save();
     }
 
+    export interface KnownLabel {
+        HOME: string;
+        MOBILE: string;
+        WORK: string;
+        FAX_WORK: string;
+        FAX_HOME: string;
+        PAGER: string;
+        HOMEPAGE: string;
+        MAIN: string;
+        OTHER: string;
+        
+        // Android Specific                
+        CALLBACK: string;
+        CAR: string;
+        COMPANY_MAIN: string;
+        ISDN: string;
+        OTHER_FAX: string;
+        RADIO: string;
+        TELEX: string;
+        TTY_TDD: string;
+        WORK_MOBILE: string;
+        WORK_PAGER: string;
+        ASSISTANT: string;
+        MMS: string;
+        FTP: string;
+        PROFILE: string;
+        BLOG: string;
+    }
+    
     export interface GetContactResult {
         data: Contact;
         ios: any; // TODO: Change to CNContact once it is added to {N}'s .d.ts
-        android: android.database.Cursor
+        android: android.database.Cursor;
+        response: string; // "selected" or "cancelled"
     }
 
     export function getContact(): Promise<GetContactResult>;

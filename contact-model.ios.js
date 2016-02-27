@@ -36,7 +36,7 @@ var Contact = (function (_super) {
                 this.phoneNumbers.push(
                     {
                         id: pdata.identifier,
-                        label: pdata.label.replace("_$!<","").replace(">!$_",""),
+                        label: helper.getPhoneLabel(pdata.label),
                         value: pdata.value.stringValue
                     });
             }
@@ -48,7 +48,7 @@ var Contact = (function (_super) {
                 this.emailAddresses.push(
                     {
                         id: edata.identifier,
-                        label: edata.label.replace("_$!<","").replace(">!$_",""),
+                        label: helper.getGenericLabel(edata.label),
                         value: edata.value
                     });
             }
@@ -60,7 +60,7 @@ var Contact = (function (_super) {
                 this.postalAddresses.push(
                     {
                         id: postaldata.identifier,
-                        label: postaldata.label.replace("_$!<","").replace(">!$_",""),
+                        label: helper.getGenericLabel(postaldata.label),
                         location: {
                             street: postaldata.value.street,
                             city: postaldata.value.city,
@@ -79,12 +79,114 @@ var Contact = (function (_super) {
                 var urldata = contactData.urlAddresses[i];
                 this.urls.push(
                     {
-                        label: urldata.label.replace("_$!<","").replace(">!$_",""),
+                        label: helper.getWebsiteLabel(urldata.label),
                         value: urldata.value
                     });
             }
         }
-    }
+    };
+    
+    Contact.prototype.save = function () {
+        var isUpdate = false;
+        var store = new CNContactStore();
+        var contactRecord;
+        
+        if (this.id && this.id !== "") {
+            var searchPredicate = CNContact.predicateForContactsWithIdentifiers([this.id]);
+            var keysToFetch = [
+                "givenName", 
+                "familyName", 
+                "middleName", 
+                "namePrefix", 
+                "nameSuffix", 
+                "phoneticGivenName", 
+                "phoneticMiddleName", 
+                "phoneticFamilyName", 
+                "nickname", 
+                "jobTitle", 
+                "departmentName", 
+                "organizationName", 
+                "notes", 
+                "phoneNumbers", 
+                "emailAddresses", 
+                "postalAddresses", 
+                "urlAddresses"
+            ]; // All Properties that we are changing
+            var foundContacts = store.unifiedContactsMatchingPredicateKeysToFetchError(searchPredicate, keysToFetch, null);
+            if (foundContacts.count > 0) {
+                contactRecord = foundContacts[0].mutableCopy();
+                isUpdate = true;
+            }
+        }
+        
+        if (!contactRecord) {
+            contactRecord = new CNMutableContact();
+        }
+        
+        // Set Names
+        contactRecord.givenName = this.name.given;
+        contactRecord.familyName = this.name.family;
+        contactRecord.middleName = this.name.middle;
+        contactRecord.namePrefix = this.name.prefix;
+        contactRecord.nameSuffix = this.name.suffix;
+        contactRecord.phoneticGivenName = this.name.phonetic.given;
+        contactRecord.phoneticMiddleName = this.name.phonetic.middle;
+        contactRecord.phoneticFamilyName = this.name.phonetic.family;
+        
+        // Set nickname
+        contactRecord.nickname = this.nickname;
+        
+        // Set Phones
+        contactRecord.phoneNumbers = this.phoneNumbers.map(function (item) {
+            return CNLabeledValue.labeledValueWithLabelValue(helper.getNativePhoneLabel(item.label), CNPhoneNumber.phoneNumberWithStringValue(item.value))    
+        });
+        
+        // Set Emails
+        contactRecord.emailAddresses = this.emailAddresses.map(function (item) {
+            return CNLabeledValue.labeledValueWithLabelValue(helper.getNativeGenericLabel(item.label), item.value)
+        });
+        
+        // Set Addresses
+        contactRecord.postalAddresses = this.postalAddresses.map(function (item) {
+            var mutableAddress = new CNMutablePostalAddress();
+            mutableAddress.street = item.location.street;
+            mutableAddress.city = item.location.city;
+            mutableAddress.state = item.location.state;
+            mutableAddress.postalCode = item.location.postalCode;
+            mutableAddress.country = item.location.country;
+            mutableAddress.ISOCountryCode = item.location.countryCode;
+            
+            return CNLabeledValue.labeledValueWithLabelValue(helper.getNativeGenericLabel(item.label), mutableAddress)
+        });
+        
+        // Set Notes
+        contactRecord.notes = this.notes;
+                
+        // Set Websites
+        contactRecord.urlAddresses = this.urls.map(function (item) {
+            return CNLabeledValue.labeledValueWithLabelValue(helper.getNativeWebsiteLabel(item.label), item.value)
+        });
+        
+        // Set Organization
+        contactRecord.jobTitle = this.organization.jobTitle;
+        contactRecord.departmentName = this.organization.department;
+        contactRecord.organizationName = this.organization.name;
+                
+        var saveRequest = new CNSaveRequest();
+        if (isUpdate) {
+            saveRequest.updateContact(contactRecord)
+        }
+        else {
+            saveRequest.addContactToContainerWithIdentifier(contactRecord, null);
+        }
+        
+        var error;
+        store.executeSaveRequestError(saveRequest, error);
+        
+        if (error) {
+            throw new Error(error.localizedDescription);
+        }
+    };
 
     return Contact;
 })(ContactCommon)

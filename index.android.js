@@ -1,5 +1,6 @@
 var appModule = require("application");
 var Contact = require("./contact-model");
+var KnownLabel = require("./known-label");
 
 exports.getContact = function() {
     return new Promise(function(resolve, reject) {
@@ -60,4 +61,7 @@ exports.getContact = function() {
             }
         }
     });
-}
+};
+
+exports.Contact = Contact;
+exports.KnownLabel = KnownLabel;

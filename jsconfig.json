@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs"
+    },
+    "files": [
+        "contact-helper.android.js", 
+        "contact-helper.ios.js", 
+        "contact-helper-common.js", 
+        "contact-model.android.js", 
+        "contact-model.ios.js", 
+        "contact-model-common.js",         
+        "index.android.js", 
+        "index.ios.js", 
+        "nativescript-contacts.d.ts",
+        "node_modules\\tns-core-modules\\tns-core-modules.d.ts"
+    ]
+}
