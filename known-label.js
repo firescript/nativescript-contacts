@@ -12,7 +12,7 @@ module.exports = {
     // Android Specific
     CALLBACK: "Callback", 
     CAR: "Car",
-    COMPANY_NAME: "Company Main",
+    COMPANY_MAIN: "Company Main",
     ISDN: "ISDN",
     OTHER_FAX: "Other Fax",
     RADIO: "Radio",

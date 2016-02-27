@@ -78,7 +78,7 @@ declare module "nativescript-contacts" {
         // Android Specific                
         CALLBACK: string;
         CAR: string;
-        COMPANY_NAME: string;
+        COMPANY_MAIN: string;
         ISDN: string;
         OTHER_FAX: string;
         RADIO: string;

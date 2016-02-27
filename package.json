@@ -1,7 +1,7 @@
 {
   "name": "nativescript-contacts",
-  "version": "1.1.1",
-  "description": "A NativeScript module providing easy access to iOS (and eventually android) contact directory to pick a contact and return its data.",
+  "version": "1.2.0",
+  "description": "A NativeScript module providing easy access to iOS and android contact directory. Pick a contact, update date, or add a new one!",
   "main": "index.js",
   "repository": {
     "type": "git",

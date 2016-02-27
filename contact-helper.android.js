@@ -259,7 +259,7 @@ exports.getPhoneType = function(data2, data3){
             typeConverted = KnownLabel.CAR;
             break;
         case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-            typeConverted = KnownLabel.COMPANY_NAME;
+            typeConverted = KnownLabel.COMPANY_MAIN;
             break;
         case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
             typeConverted = KnownLabel.ISDN;
@@ -327,7 +327,7 @@ exports.getNativePhoneType = function (label) {
         case KnownLabel.CAR:
             nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_CAR;
             break;
-        case KnownLabel.COMPANY_NAME:
+        case KnownLabel.COMPANY_MAIN:
             nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN;
             break;
         case KnownLabel.ISDN:
