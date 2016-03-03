@@ -402,10 +402,6 @@ exports.getRawContactBuilder = function (rawId, mimetype, isDelete) {
     return builder;
 }
 
-exports.getAvatar = function(){
-    return "android Image";
-};
-
 exports.convertNativeCursorToJson = function(cursor) {
     //noinspection JSUnresolvedFunction
     var count = cursor.getColumnCount();

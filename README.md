@@ -54,12 +54,14 @@ contacts.getContact().then(function(args){
 ```js
 var app = require( "application" );
 var contacts = require( "nativescript-contacts" );
+var imageSource = require( "image-source" );
 
 var newContact = new contacts.Contact();
 newContact.name.given = "John";
 newContact.name.family = "Doe";
 newContact.phoneNumbers.push({ label: contacts.KnownLabel.HOME, value: "123457890" }); // See below for known labels
 newContact.phoneNumbers.push({ label: "My Custom Label", value: "11235813" });
+newContact.photo = imageSource.fromFileOrResource("~/photo.png");
 newContact.save();
 ```
 
@@ -67,13 +69,18 @@ newContact.save();
 ```js
 var app = require( "application" );
 var contacts = require( "nativescript-contacts" );
+var imageSource = require( "image-source" );
 
 contacts.getContact().then(function(args){
     if (args.response === "selected") {
         var contact = args.data;        
         contact.name.given = "Jane";
         contact.name.family = "Doe";
-        contact.save();
+        
+        imageSource.fromUrl("http://www.google.com/images/errors/logo_sm_2.png").then(function (src) {
+            contact.photo = src;
+            contact.save();
+        });
     }
 });
 ```
@@ -108,7 +115,8 @@ contacts.getContact().then(function(args){
         type: ""
     },
     notes : "",
-
+    photo: null, // {N} ImageSource instance
+    
     phoneNumbers : [], 
     emailAddresses : [],
     postalAddresses : [],

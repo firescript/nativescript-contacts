@@ -41,11 +41,6 @@ var Contact = (function () {
         // Abstract Method
     };
     
-    /// TODO: NOT FUNCTIONAL ATM
-    Contact.prototype.getAvatar = function(){
-        return helper.getAvatar();
-    }
-
     return Contact;
 })();
 
