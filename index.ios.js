@@ -101,6 +101,61 @@ exports.fetchContactsByName = function(searchPredicate){
         }
     });
 };
+exports.fetchAllContacts = function(){
+    return new Promise(function (resolve, reject){
+        var store = new CNContactStore(),
+        error,
+        keysToFetch = [
+                "givenName", 
+                "familyName", 
+                "middleName", 
+                "namePrefix", 
+                "nameSuffix", 
+                "phoneticGivenName", 
+                "phoneticMiddleName", 
+                "phoneticFamilyName", 
+                "nickname", 
+                "jobTitle", 
+                "departmentName", 
+                "organizationName", 
+                "notes", 
+                "phoneNumbers", 
+                "emailAddresses", 
+                "postalAddresses", 
+                "urlAddresses", 
+                "imageData",
+                "imageDataAvailable"
+        ], // All Properties that we are using in the Model
+        fetch = CNContactFetchRequest.alloc().initWithKeysToFetch(keysToFetch),
+        cts = [];
+        
+        fetch.unifyResults = true;
+        fetch.predicate = null;
+        
+        store.enumerateContactsWithFetchRequestErrorUsingBlock(fetch, error, function(c,s){
+            var contactModel = new Contact();
+            contactModel.initializeFromNative(c);
+            cts.push(contactModel);
+        });
+        
+        if(error){
+            reject(error.localizedDescription);
+        }
+        
+        if(cts.length > 0){
+            resolve({
+                data: cts,
+                response: "fetch"
+            });
+        }
+        else{
+            resolve({
+                data: null,
+                response: "fetch"
+            });
+        }
+    });
+};
 
 exports.Contact = Contact;
 exports.KnownLabel = KnownLabel;
