@@ -1,4 +1,6 @@
 declare module "nativescript-contacts" {
+    import imageSource = require("image-source");
+    
     export interface ContactField {
         id?: string;
         label: string;
@@ -55,6 +57,7 @@ declare module "nativescript-contacts" {
         nickname: string;
         organization: Organization;
         notes: string;
+        photo: imageSource.ImageSource
 
         phoneNumbers: ContactField[];
         emailAddresses: ContactField[];

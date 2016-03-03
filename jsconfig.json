@@ -12,6 +12,7 @@
         "contact-model-common.js",         
         "index.android.js", 
         "index.ios.js", 
+        "known-label.js", 
         "nativescript-contacts.d.ts",
         "node_modules\\tns-core-modules\\tns-core-modules.d.ts"
     ]

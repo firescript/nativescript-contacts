@@ -25,7 +25,8 @@ var Contact = (function () {
         
         this.nickname = "";
         this.notes = "";
-
+        this.photo = null;
+        
         this.urls = [];
         this.phoneNumbers = [];
         this.emailAddresses = [];
@@ -40,11 +41,6 @@ var Contact = (function () {
         // Abstract Method
     };
     
-    /// TODO: NOT FUNCTIONAL ATM
-    Contact.prototype.getAvatar = function(){
-        return helper.getAvatar();
-    }
-
     return Contact;
 })();
 
