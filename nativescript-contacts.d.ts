@@ -103,5 +103,12 @@ declare module "nativescript-contacts" {
         response: string; // "selected" or "cancelled"
     }
 
+    export interface GetSearchResult {
+        data: Contact;
+        response: string;
+    }
+
     export function getContact(): Promise<GetContactResult>;
+    export function fetchContactsByName(): Promise<GetSearchResult>;
+    export function fetchAllContacts(): Promise<GetSearchResult>;
 }
