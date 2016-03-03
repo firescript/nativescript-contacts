@@ -1,5 +1,6 @@
 var helper = require("./contact-helper");
 var ContactCommon = require("./contact-model-common");
+var imageSource = require("image-source");
 
 var Contact = (function (_super) {
     global.__extends(Contact, _super);
@@ -29,6 +30,10 @@ var Contact = (function (_super) {
         this.nickname = helper.getiOSValue("nickname", contactData);
         
         this.notes = helper.getiOSValue("notes", contactData);
+        
+        if (contactData.imageDataAvailable) {
+            this.photo = imageSource.fromData(contactData.imageData);
+        }
         
         if(contactData.phoneNumbers.count > 0){
             for(var i = 0; i < contactData.phoneNumbers.count; i++){
@@ -110,7 +115,8 @@ var Contact = (function (_super) {
                 "phoneNumbers", 
                 "emailAddresses", 
                 "postalAddresses", 
-                "urlAddresses"
+                "urlAddresses", 
+                "imageData"
             ]; // All Properties that we are changing
             var foundContacts = store.unifiedContactsMatchingPredicateKeysToFetchError(searchPredicate, keysToFetch, null);
             if (foundContacts.count > 0) {
@@ -171,7 +177,16 @@ var Contact = (function (_super) {
         contactRecord.jobTitle = this.organization.jobTitle;
         contactRecord.departmentName = this.organization.department;
         contactRecord.organizationName = this.organization.name;
-                
+        
+        // Set photo
+        if (!this.photo || !this.photo.ios) {
+            // Delete the image
+            contactRecord.imageData = null;
+        }
+        else {
+            contactRecord.imageData = UIImageJPEGRepresentation(this.photo.ios, 1.0);
+        }
+        
         var saveRequest = new CNSaveRequest();
         if (isUpdate) {
             saveRequest.updateContact(contactRecord)
