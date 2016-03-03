@@ -85,6 +85,40 @@ contacts.getContact().then(function(args){
 });
 ```
 
+####fetchContactsByName: Find all contacts whose name matches. Returns an array of contact data.
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.fetchContactsByName("Hicks").then(function(args){
+    console.log("fetchContactsByName Complete");
+    console.log(JSON.stringify(args));
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object, null if no contacts were found.
+    /// args.reponse: "fetch"
+}, function(err){
+    console.log("Error: " + err);
+});
+```
+
+####fetchAllContacts: Find all contacts. Returns an array of contact data.
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.fetchAllContacts().then(function(args){
+    console.log("fetchAllContacts Complete");
+    console.log(JSON.stringify(args));
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object, null if no contacts were found.
+    /// args.reponse: "fetch"
+}, function(err){
+    console.log("Error: " + err);
+});
+```
+
 ### Single User Data Structure
 ```js
 {
