@@ -62,6 +62,16 @@ exports.getContact = function() {
         }
     });
 };
+exports.fetchContactsByName = function(){
+    return new Promise(function (resolve, reject){
+        //TODO:
+    });
+};
+exports.fetchAllContacts = function(){
+    return new Promise(function (resolve, reject){
+        //TODO:
+    });
+};
 
 exports.Contact = Contact;
 exports.KnownLabel = KnownLabel;
