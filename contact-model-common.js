@@ -25,7 +25,8 @@ var Contact = (function () {
         
         this.nickname = "";
         this.notes = "";
-
+        this.photo = null;
+        
         this.urls = [];
         this.phoneNumbers = [];
         this.emailAddresses = [];

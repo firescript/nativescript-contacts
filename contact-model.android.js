@@ -1,5 +1,6 @@
 var helper = require("./contact-helper");
 var appModule = require("application");
+var imageSource = require("image-source")
 var ContactCommon = require("./contact-model-common");
 
 /* missing constants from the {N} */
@@ -7,6 +8,8 @@ var ACCOUNT_TYPE = "account_type"; // android.provider.ContactsContract.RawConta
 var ACCOUNT_NAME = "account_name"; // android.provider.ContactsContract.RawContacts.ACCOUNT_NAME
 var TYPE = "data2"; // android.provider.ContactsContract.CommonDataKinds.Phone.TYPE / android.provider.ContactsContract.CommonDataKinds.Email.TYPE / android.provider.ContactsContract.CommonDataKinds.StructuredPostal.TYPE
 var LABEL = "data3";
+var PHOTO_URI = "photo_uri"; // android.provider.ContactsContract.CommonDataKinds.Phone.PHOTO_URI
+var IS_SUPER_PRIMARY = "is_super_primary"; // android.provider.ContactsContract.Data.IS_SUPER_PRIMARY
 
 var Contact = (function (_super) {
     global.__extends(Contact, _super);
@@ -24,7 +27,15 @@ var Contact = (function (_super) {
     Contact.prototype.initializeFromNative = function (cursor) {
         var mainCursorJson = helper.convertNativeCursorToJson(cursor);
         this.id = mainCursorJson["_id"];
+        
+        // Get photo
+        if (mainCursorJson[PHOTO_URI]) {
+            var bitmap = android.provider.MediaStore.Images.Media.getBitmap(appModule.android.foregroundActivity.getContentResolver(), 
+                                                                            android.net.Uri.parse(mainCursorJson[PHOTO_URI]));
 
+            this.photo = imageSource.fromNativeSource(bitmap)
+        }
+        
         //Get Basic User Details
         var userNameParameters = [
             this.id.toString(),
@@ -222,6 +233,8 @@ var Contact = (function (_super) {
                     .build());
             ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE, true)
                     .build());
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE, true)
+                    .build());
         }
         else {
             ops.add(android.content.ContentProviderOperation.newInsert(android.provider.ContactsContract.RawContacts.CONTENT_URI)
@@ -317,6 +330,17 @@ var Contact = (function (_super) {
                 .withValue(android.provider.ContactsContract.CommonDataKinds.Organization.OFFICE_LOCATION, this.organization.location)
                 .build());
 
+        // Add Photo
+        if (this.photo && this.photo.android) {
+            var stream = new java.io.ByteArrayOutputStream();
+            this.photo.android.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, stream);
+            
+            ops.add(helper.getRawContactBuilder(rawId, android.provider.ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
+                    .withValue(IS_SUPER_PRIMARY, new java.lang.Integer(1))
+                    .withValue(android.provider.ContactsContract.CommonDataKinds.Photo.PHOTO, stream.toByteArray())
+                    .build());
+        }
+        
         // Perform the save
         contentResolver.applyBatch(android.provider.ContactsContract.AUTHORITY, ops);
     };
