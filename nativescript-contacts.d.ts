@@ -102,13 +102,15 @@ declare module "nativescript-contacts" {
         android: android.database.Cursor;
         response: string; // "selected" or "cancelled"
     }
-
-    export interface GetSearchResult {
+    
+    export interface GetFetchResult {
         data: Contact;
+        ios: NSArray<any>; //TODO: NSArray<CNContact *> {N}'s .d.ts
+        android: android.database.Cursor;
         response: string;
     }
 
     export function getContact(): Promise<GetContactResult>;
-    export function fetchContactsByName(): Promise<GetSearchResult>;
-    export function fetchAllContacts(): Promise<GetSearchResult>;
+    export function getContactsByName(): Promise<GetFetchResult>;
+    export function getAllContacts(): Promise<GetFetchResult>;
 }
