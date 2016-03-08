@@ -62,6 +62,64 @@ exports.getContact = function() {
         }
     });
 };
+exports.getContactsByName = function(searchPredicate){
+    return new Promise(function (resolve, reject){
+        var Contacts = android.provider.ContactsContract.Contacts,
+        SELECTION = android.provider.ContactsContract.ContactNameColumns.DISPLAY_NAME_PRIMARY,
+        c = appModule.android.context.getContentResolver().query(Contacts.CONTENT_URI, null, SELECTION + " like ?", ["%" + searchPredicate + "%"], null);
+        
+        if(c.getCount() > 0){
+            var cts = [];
+            while(c.moveToNext()){
+                var contactModel = new Contact();
+                contactModel.initializeFromNative(c);
+                cts.push(contactModel);
+            }
+            resolve({
+                data: cts,
+                ios:null,
+                android:c,
+                response: "fetch"
+            });
+        }
+        else{
+            resolve({
+                data: null,
+                ios:null,
+                android:null,
+                response: "fetch"
+            });
+        }
+    });
+};
+exports.getAllContacts = function(){
+    return new Promise(function (resolve, reject){
+        var c = appModule.android.context.getContentResolver().query(android.provider.ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        
+        if(c.getCount() > 0){
+            var cts = [];
+            while(c.moveToNext()){
+                var contactModel = new Contact();
+                contactModel.initializeFromNative(c);
+                cts.push(contactModel);
+            }
+            resolve({
+                data: cts,
+                ios:null,
+                android:c,
+                response: "fetch"
+            });
+        }
+        else{
+            resolve({
+                data: null,
+                ios:null,
+                android:null,
+                response: "fetch"
+            });
+        }
+    });
+};
 
 exports.Contact = Contact;
 exports.KnownLabel = KnownLabel;
