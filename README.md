@@ -85,34 +85,40 @@ contacts.getContact().then(function(args){
 });
 ```
 
-####fetchContactsByName: Find all contacts whose name matches. Returns an array of contact data.
+####getContactsByName: Find all contacts whose name matches. Returns an array of contact data.
 
 ```js
 var app = require( "application" );
 var contacts = require( "nativescript-contacts" );
 
-contacts.fetchContactsByName("Hicks").then(function(args){
-    console.log("fetchContactsByName Complete");
+contacts.getContactsByName("Hicks").then(function(args){
+    console.log("getContactsByName Complete");
     console.log(JSON.stringify(args));
     /// Returns args:
     /// args.data: Generic cross platform JSON object, null if no contacts were found.
+    /// args.ios: NSArray<CNContact>, null if no contacts were found.
+    /// args.android.cursor: Raw Android object before conversion
+    /// args.android.data: JSONified cursor
     /// args.reponse: "fetch"
 }, function(err){
     console.log("Error: " + err);
 });
 ```
 
-####fetchAllContacts: Find all contacts. Returns an array of contact data.
+####getAllContacts: Find all contacts. Returns an array of contact data.
 
 ```js
 var app = require( "application" );
 var contacts = require( "nativescript-contacts" );
 
-contacts.fetchAllContacts().then(function(args){
-    console.log("fetchAllContacts Complete");
+contacts.getAllContacts().then(function(args){
+    console.log("getAllContacts Complete");
     console.log(JSON.stringify(args));
     /// Returns args:
     /// args.data: Generic cross platform JSON object, null if no contacts were found.
+    /// args.ios: NSArray<CNContact>, null if no contacts were found.
+    /// args.android.cursor: Raw Android object before conversion
+    /// args.android.data: JSONified cursor
     /// args.reponse: "fetch"
 }, function(err){
     console.log("Error: " + err);
