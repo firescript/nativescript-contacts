@@ -85,6 +85,46 @@ contacts.getContact().then(function(args){
 });
 ```
 
+####getContactsByName: Find all contacts whose name matches. Returns an array of contact data.
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getContactsByName("Hicks").then(function(args){
+    console.log("getContactsByName Complete");
+    console.log(JSON.stringify(args));
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object, null if no contacts were found.
+    /// args.ios: NSArray<CNContact>, null if no contacts were found.
+    /// args.android.cursor: Raw Android object before conversion
+    /// args.android.data: JSONified cursor
+    /// args.reponse: "fetch"
+}, function(err){
+    console.log("Error: " + err);
+});
+```
+
+####getAllContacts: Find all contacts. Returns an array of contact data.
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getAllContacts().then(function(args){
+    console.log("getAllContacts Complete");
+    console.log(JSON.stringify(args));
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object, null if no contacts were found.
+    /// args.ios: NSArray<CNContact>, null if no contacts were found.
+    /// args.android.cursor: Raw Android object before conversion
+    /// args.android.data: JSONified cursor
+    /// args.reponse: "fetch"
+}, function(err){
+    console.log("Error: " + err);
+});
+```
+
 ### Single User Data Structure
 ```js
 {
