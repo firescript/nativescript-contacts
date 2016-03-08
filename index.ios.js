@@ -50,7 +50,7 @@ exports.getContact = function (){
         page.presentModalViewControllerAnimated(controller, true);
     });
 };
-exports.fetchContactsByName = function(searchPredicate){
+exports.getContactsByName = function(searchPredicate){
     return new Promise(function (resolve, reject){
         var store = new CNContactStore(),
         error,
