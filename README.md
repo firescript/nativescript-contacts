@@ -125,6 +125,80 @@ contacts.getAllContacts().then(function(args){
 });
 ```
 
+####getGroups: Find groups. Returns an array of group data.
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getGroups("Test Group") //[name] optional. If defined will look for group with the specified name, otherwise will return all groups.
+    .then(function(args){
+        console.log("getGroups Complete");
+        console.log(JSON.stringify(args));
+        /// Returns args:
+        /// args.data: Generic cross platform JSON object, null if no groups were found.
+        /// args.ios: NSArray<CNGroup>, null if no groups were found.
+        /// args.android.cursor: Raw Android object before conversion
+        /// args.android.data: JSONified cursor
+        /// args.reponse: "fetch"
+        
+        if(args.data === null){
+            console.log("No Groups Found!");
+        }
+        else{
+            console.log("Group(s) Found!");
+        }
+        
+    }, function(err){
+        console.log("Error: " + err);
+    });
+```
+
+####Save a new group
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+var groupModel = new contacts.Group();
+groupModel.name="Test Group";
+groupModel.save(false); //Argument(iOS Only??) false=> Use Local Container, true=> Use Default Container
+```
+
+####Delete a group
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getGroups("Test Group")
+.then(function(args){
+    console.log("getGroups Complete");
+    console.log(JSON.stringify(args));
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object, null if no groups were found.
+    /// args.ios: NSArray<CNGroup>, null if no groups were found.
+    /// args.android.cursor: Raw Android object before conversion
+    /// args.android.data: JSONified cursor
+    /// args.reponse: "fetch"
+        
+    if(args.data !== null){
+        console.log("Group(s) Found!");
+        args.data[0].delete(); //Delete the first found group
+    }
+}, function(err){
+        console.log("Error: " + err);
+});
+```
+
+####Add Member To Group
+```js
+```
+
+####Remove Member From Group
+```js
+```
+
 ### Single User Data Structure
 ```js
 {
@@ -254,7 +328,15 @@ Android - *url*
 * **BLOG**  
 Android - *url*
 
-Those are the system labels but you can also use any custome label you want. 
+Those are the system labels but you can also use any custom label you want. 
+
+### Single Group Data Structure
+```js
+{
+    id : "";
+    name : "";
+}
+```
 
 
 ### iOS
