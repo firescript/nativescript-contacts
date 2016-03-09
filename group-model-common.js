@@ -8,7 +8,17 @@ var Group = (function () {
         // Abstract Method
     };
 
-    Group.prototype.save = function() {
+    Group.prototype.save = function(useDefault) {
+        // Abstract Method
+    };
+    
+    Group.prototype.delete = function() {
+        // Abstract Method
+    };
+    Group.prototype.addMember = function(contact){
+        // Abstract Method
+    };
+    Group.prototype.removeMember = function(contact){
         // Abstract Method
     };
     
