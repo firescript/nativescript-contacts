@@ -85,6 +85,27 @@ contacts.getContact().then(function(args){
 });
 ```
 
+####Delete a contact
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getContact().then(function(args){
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object
+    /// args.ios: Raw iOS object before conversion
+    /// args.android.cursor: Raw Android object before conversion
+    /// args.android.data: JSONified cursor 
+    /// args.reponse: "selected" or "cancelled" depending on wheter the user selected a contact. 
+    
+    if (args.response === "selected") {
+        var contact = args.data; //See data structure below
+        contact.delete();
+    }
+});
+```
+
 ####getContactsByName: Find all contacts whose name matches. Returns an array of contact data.
 
 ```js
@@ -193,10 +214,84 @@ contacts.getGroups("Test Group")
 
 ####Add Member To Group
 ```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getContact().then(function(args){
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object
+    /// args.ios: Raw iOS object before conversion
+    /// args.android.cursor: Raw Android object before conversion
+    /// args.android.data: JSONified cursor 
+    /// args.reponse: "selected" or "cancelled" depending on wheter the user selected a contact. 
+    
+    if (args.response === "selected") {
+        var contact = args.data; //See data structure below
+        contacts.getGroups("Test Group")
+        .then(function(a){
+            if(a.data !== null){
+                var group = a.data[0];
+                group.addMember(contact);
+            }
+        }, function(err){
+            console.log("Error: " + err);
+        });
+    }
+});
 ```
 
 ####Remove Member From Group
 ```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getGroups("Test Group") //[name] optional. If defined will look for group with the specified name, otherwise will return all groups.
+.then(function(args){
+    if(args.data !== null){
+        var group = args.data[0];
+            
+        contacts.getContactsInGroup(group).then(function(a){
+            console.log("getContactsInGroup complete");
+            if(a.data !== null){
+                a.data.forEach(function(c,idx){
+                    group.removeMember(c);
+                });
+            }
+        }, function(err){
+            console.log("Error: " + err);
+        });
+    }
+}, function(err){
+    console.log("Error: " + err);
+});
+```
+
+####getContactsInGroup: Get all contacts in a group. Returns an array of contact data.
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getGroups("Test Group") //[name] optional. If defined will look for group with the specified name, otherwise will return all groups.
+.then(function(args){
+    if(args.data !== null){
+        var group = args.data[0];
+            
+        contacts.getContactsInGroup(group).then(function(a){
+            console.log("getContactsInGroup complete");
+            /// Returns args:
+            /// args.data: Generic cross platform JSON object, null if no groups were found.
+            /// args.ios: NSArray<CNGroup>, null if no groups were found.
+            /// args.android.cursor: Raw Android object before conversion
+            /// args.android.data: JSONified cursor
+            /// args.reponse: "fetch"
+        }, function(err){
+            console.log("Error: " + err);
+        });
+    }
+}, function(err){
+    console.log("Error: " + err);
+});
 ```
 
 ### Single User Data Structure
