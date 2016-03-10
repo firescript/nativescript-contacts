@@ -113,4 +113,19 @@ declare module "nativescript-contacts" {
     export function getContact(): Promise<GetContactResult>;
     export function getContactsByName(): Promise<GetFetchResult>;
     export function getAllContacts(): Promise<GetFetchResult>;
+    export function getContactsInGroup(): Promise<GetFetchResult>;
+
+    export class Group {
+        id: string;
+        name: string;
+    }
+
+    export interface GetGroupResult {
+        data: Group;
+        ios: NSArray<any>; //TODO: NSArray<CNGroup> {N}'s .d.ts
+        android: any;
+        response: string;
+    }
+        
+    export function getGroups(): Promise<GetGroupResult>;
 }
