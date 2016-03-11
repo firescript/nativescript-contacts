@@ -183,7 +183,10 @@ var contacts = require( "nativescript-contacts" );
 
 var groupModel = new contacts.Group();
 groupModel.name="Test Group";
-groupModel.save(false); //Argument(iOS Only??) false=> Use Local Container, true=> Use Default Container
+//Save Argument (boolean)
+//iOS: [false=> Use Local Container, true=> Use Default Container]
+//Android: will always be true, setting this value will not affect android.
+groupModel.save(false); 
 ```
 
 ####Delete a group
