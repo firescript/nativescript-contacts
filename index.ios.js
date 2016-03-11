@@ -15,9 +15,7 @@ var CustomCNContactPickerViewControllerDelegate = NSObject.extend({
     contactPickerDidCancel: function(controller){
         this.resolve({
            data: null,
-           response: "cancelled",
-           ios: null,
-           android: null 
+           response: "cancelled"
         });
     },
     contactPickerDidSelectContact: function(controller, contact) {        
@@ -29,9 +27,7 @@ var CustomCNContactPickerViewControllerDelegate = NSObject.extend({
         
         this.resolve({
             data: contactModel,
-            response: "selected",
-            ios: contact,
-            android: null
+            response: "selected"
         });        
         CFRelease(controller.delegate);
     }
@@ -91,16 +87,12 @@ exports.getContactsByName = function(searchPredicate){
             }
             resolve({
                 data: cts,
-                ios:foundContacts,
-                android:null,
                 response: "fetch"
             });
         }
         else{
             resolve({
                 data: null,
-                ios:null,
-                android:null,
                 response: "fetch"
             });
         }
@@ -150,19 +142,14 @@ exports.getAllContacts = function(){
         }
         
         if(cts.length > 0){
-            var nativeArray = NSArray.arrayWithArray(nativeMutableArray);
             resolve({
                 data: cts,
-                ios:nativeArray,
-                android:null,
                 response: "fetch"
             });
         }
         else{
             resolve({
                 data: null,
-                ios:null,
-                android:null,
                 response: "fetch"
             });
         }
@@ -210,16 +197,12 @@ exports.getGroups = function(name){
             }
             resolve({
                 data: groups,
-                ios:foundGroups,
-                android:null,
                 response: "fetch"
             });
         }
         else{
             resolve({
                 data: null,
-                ios:null,
-                android:null,
                 response: "fetch"
             });
         }
@@ -265,22 +248,17 @@ exports.getContactsInGroup=function(g){
             }
             resolve({
                 data: cts,
-                ios:foundContacts,
-                android:null,
                 response: "fetch"
             });
         }
         else{
             resolve({
                 data: null,
-                ios:null,
-                android:null,
                 response: "fetch"
             });
         }
     });
 };
-
 
 exports.Contact = Contact;
 exports.KnownLabel = KnownLabel;

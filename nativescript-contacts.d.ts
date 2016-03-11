@@ -98,16 +98,12 @@ declare module "nativescript-contacts" {
     
     export interface GetContactResult {
         data: Contact;
-        ios: any; // TODO: Change to CNContact once it is added to {N}'s .d.ts
-        android: android.database.Cursor;
         response: string; // "selected" or "cancelled"
     }
     
     export interface GetFetchResult {
-        data: Contact;
-        ios: NSArray<any>; //TODO: NSArray<CNContact *> {N}'s .d.ts
-        android: android.database.Cursor;
-        response: string;
+        data: Contact[];
+        response: string; // "fetch"
     }
 
     export function getContact(): Promise<GetContactResult>;
@@ -121,10 +117,8 @@ declare module "nativescript-contacts" {
     }
 
     export interface GetGroupResult {
-        data: Group;
-        ios: NSArray<any>; //TODO: NSArray<CNGroup> {N}'s .d.ts
-        android: any;
-        response: string;
+        data: Group[];
+        response: string; // "fetch"
     }
         
     export function getGroups(): Promise<GetGroupResult>;

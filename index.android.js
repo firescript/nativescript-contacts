@@ -24,6 +24,7 @@ exports.getContact = function() {
                             var mainCursor = contentResolver.query(pickedContactData, null, null, null, null);
                             mainCursor.moveToFirst();
                             if (!mainCursor) {
+                                mainCursor.close();
                                 reject();
                                 return;
                             }
@@ -31,19 +32,16 @@ exports.getContact = function() {
                             //Convert the native contact object
                             var contactModel = new Contact();
                             contactModel.initializeFromNative(mainCursor);
-        
+                            mainCursor.close();
+                            
                             return resolve({
                                 data: contactModel,
-                                response: "selected",
-                                ios: null,
-                                android: mainCursor
+                                response: "selected"
                             });
                         } else {
                             return resolve({
                                 data: null,
-                                response: "cancelled",
-                                ios: null,
-                                android: null 
+                                response: "cancelled"
                             });
                         }
                         break;
@@ -76,18 +74,16 @@ exports.getContactsByName = function(searchPredicate){
                 contactModel.initializeFromNative(c);
                 cts.push(contactModel);
             }
+            c.close();
             resolve({
                 data: cts,
-                ios:null,
-                android:c,
                 response: "fetch"
             });
         }
         else{
+            c.close();
             resolve({
                 data: null,
-                ios:null,
-                android:null,
                 response: "fetch"
             });
         }
@@ -104,18 +100,16 @@ exports.getAllContacts = function(){
                 contactModel.initializeFromNative(c);
                 cts.push(contactModel);
             }
+            c.close();
             resolve({
                 data: cts,
-                ios:null,
-                android:c,
                 response: "fetch"
             });
         }
         else{
+            c.close();
             resolve({
                 data: null,
-                ios:null,
-                android:null,
                 response: "fetch"
             });
         }
@@ -143,18 +137,17 @@ exports.getGroups = function(name){
                 groups.push(groupModel);
             }
             
+            groupCursor.close();
+            
             resolve({
                 data: groups,
-                ios:null,
-                android:groupCursor,
                 response: "fetch"
             });
         }
         else{
+            groupCursor.close();
             resolve({
                 data: null,
-                ios:null,
-                android:null,
                 response: "fetch"
             });
         }
@@ -183,18 +176,16 @@ exports.getContactsInGroup=function(g){
                 
                 c.close();
             }
+            groupCursor.close();
             resolve({
                 data: cts,
-                ios:null,
-                android:groupCursor,
                 response: "fetch"
             });
         }
         else{
+            groupCursor.close();
             resolve({
                 data: null,
-                ios:null,
-                android:null,
                 response: "fetch"
             });
         }
