@@ -41,6 +41,10 @@ var Contact = (function () {
         // Abstract Method
     };
     
+    Contact.prototype.delete = function() {
+        // Abstract Method
+    };
+    
     return Contact;
 })();
 

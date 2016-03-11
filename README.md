@@ -1,6 +1,7 @@
 # NativeScript Contacts
 
-A NativeScript module providing easy access to iOS and Android contact directory. Pick a contact, update it, or add a new one.
+A NativeScript module providing easy access to iOS and Android contact directory. Pick a contact, update it, delete it, or add a new one. 
+Working with groups available in 1.5.0.  Create a group, add and remove contacts to the group, and delete a group.
 
 ## Installation
 
@@ -25,9 +26,6 @@ var contacts = require( "nativescript-contacts" );
 contacts.getContact().then(function(args){
     /// Returns args:
     /// args.data: Generic cross platform JSON object
-    /// args.ios: Raw iOS object before conversion
-    /// args.android.cursor: Raw Android object before conversion
-    /// args.android.data: JSONified cursor 
     /// args.reponse: "selected" or "cancelled" depending on wheter the user selected a contact. 
     
     if (args.response === "selected") {
@@ -85,6 +83,24 @@ contacts.getContact().then(function(args){
 });
 ```
 
+####Delete a contact
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getContact().then(function(args){
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object
+    /// args.reponse: "selected" or "cancelled" depending on wheter the user selected a contact. 
+    
+    if (args.response === "selected") {
+        var contact = args.data; //See data structure below
+        contact.delete();
+    }
+});
+```
+
 ####getContactsByName: Find all contacts whose name matches. Returns an array of contact data.
 
 ```js
@@ -96,9 +112,6 @@ contacts.getContactsByName("Hicks").then(function(args){
     console.log(JSON.stringify(args));
     /// Returns args:
     /// args.data: Generic cross platform JSON object, null if no contacts were found.
-    /// args.ios: NSArray<CNContact>, null if no contacts were found.
-    /// args.android.cursor: Raw Android object before conversion
-    /// args.android.data: JSONified cursor
     /// args.reponse: "fetch"
 }, function(err){
     console.log("Error: " + err);
@@ -116,10 +129,150 @@ contacts.getAllContacts().then(function(args){
     console.log(JSON.stringify(args));
     /// Returns args:
     /// args.data: Generic cross platform JSON object, null if no contacts were found.
-    /// args.ios: NSArray<CNContact>, null if no contacts were found.
-    /// args.android.cursor: Raw Android object before conversion
-    /// args.android.data: JSONified cursor
     /// args.reponse: "fetch"
+}, function(err){
+    console.log("Error: " + err);
+});
+```
+
+####getGroups: Find groups. Returns an array of group data.
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getGroups("Test Group") //[name] optional. If defined will look for group with the specified name, otherwise will return all groups.
+    .then(function(args){
+        console.log("getGroups Complete");
+        console.log(JSON.stringify(args));
+        /// Returns args:
+        /// args.data: Generic cross platform JSON object, null if no groups were found.
+        /// args.reponse: "fetch"
+        
+        if(args.data === null){
+            console.log("No Groups Found!");
+        }
+        else{
+            console.log("Group(s) Found!");
+        }
+        
+    }, function(err){
+        console.log("Error: " + err);
+    });
+```
+
+####Save a new group
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+var groupModel = new contacts.Group();
+groupModel.name="Test Group";
+//Save Argument (boolean)
+//iOS: [false=> Use Local Container, true=> Use Default Container]
+//Android: will always be true, setting this value will not affect android.
+groupModel.save(false); 
+```
+
+####Delete a group
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getGroups("Test Group")
+.then(function(args){
+    console.log("getGroups Complete");
+    console.log(JSON.stringify(args));
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object, null if no groups were found.
+    /// args.reponse: "fetch"
+        
+    if(args.data !== null){
+        console.log("Group(s) Found!");
+        args.data[0].delete(); //Delete the first found group
+    }
+}, function(err){
+        console.log("Error: " + err);
+});
+```
+
+####Add Member To Group
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getContact().then(function(args){
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object
+    /// args.reponse: "selected" or "cancelled" depending on wheter the user selected a contact. 
+    
+    if (args.response === "selected") {
+        var contact = args.data; //See data structure below
+        contacts.getGroups("Test Group")
+        .then(function(a){
+            if(a.data !== null){
+                var group = a.data[0];
+                group.addMember(contact);
+            }
+        }, function(err){
+            console.log("Error: " + err);
+        });
+    }
+});
+```
+
+####Remove Member From Group
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getGroups("Test Group") //[name] optional. If defined will look for group with the specified name, otherwise will return all groups.
+.then(function(args){
+    if(args.data !== null){
+        var group = args.data[0];
+            
+        contacts.getContactsInGroup(group).then(function(a){
+            /// Returns args:
+            /// args.data: Generic cross platform JSON object, null if no groups were found.
+            /// args.reponse: "fetch"
+            console.log("getContactsInGroup complete");
+
+            if(a.data !== null){
+                a.data.forEach(function(c,idx){
+                    group.removeMember(c);
+                });
+            }
+        }, function(err){
+            console.log("Error: " + err);
+        });
+    }
+}, function(err){
+    console.log("Error: " + err);
+});
+```
+
+####getContactsInGroup: Get all contacts in a group. Returns an array of contact data.
+
+```js
+var app = require( "application" );
+var contacts = require( "nativescript-contacts" );
+
+contacts.getGroups("Test Group") //[name] optional. If defined will look for group with the specified name, otherwise will return all groups.
+.then(function(args){
+    if(args.data !== null){
+        var group = args.data[0];
+            
+        contacts.getContactsInGroup(group).then(function(a){
+            console.log("getContactsInGroup complete");
+            /// Returns args:
+            /// args.data: Generic cross platform JSON object, null if no groups were found.
+            /// args.reponse: "fetch"
+        }, function(err){
+            console.log("Error: " + err);
+        });
+    }
 }, function(err){
     console.log("Error: " + err);
 });
@@ -254,8 +407,15 @@ Android - *url*
 * **BLOG**  
 Android - *url*
 
-Those are the system labels but you can also use any custome label you want. 
+Those are the system labels but you can also use any custom label you want. 
 
+### Single Group Data Structure
+```js
+{
+    id : "";
+    name : "";
+}
+```
 
 ### iOS
 See apples docs on properties available: 

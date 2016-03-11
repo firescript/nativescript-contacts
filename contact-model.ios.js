@@ -201,8 +201,58 @@ var Contact = (function (_super) {
         if (error) {
             throw new Error(error.localizedDescription);
         }
+        
+        //Update our id for new contacts so that we can do something else with them if we choose.
+        if(contactRecord["identifier"] !== this.id){
+            this.id = contactRecord["identifier"];
+        }
     };
 
+    Contact.prototype.delete = function(){
+        var store = new CNContactStore();
+        var contactRecord;
+        
+        if (this.id && this.id !== "") {
+            var searchPredicate = CNContact.predicateForContactsWithIdentifiers([this.id]);
+            var keysToFetch = [
+                "givenName", 
+                "familyName", 
+                "middleName", 
+                "namePrefix", 
+                "nameSuffix", 
+                "phoneticGivenName", 
+                "phoneticMiddleName", 
+                "phoneticFamilyName", 
+                "nickname", 
+                "jobTitle", 
+                "departmentName", 
+                "organizationName", 
+                "notes", 
+                "phoneNumbers", 
+                "emailAddresses", 
+                "postalAddresses", 
+                "urlAddresses", 
+                "imageData"
+            ]; // All Properties that we are changing
+            var foundContacts = store.unifiedContactsMatchingPredicateKeysToFetchError(searchPredicate, keysToFetch, null);
+            if (foundContacts.count > 0) {
+                contactRecord = foundContacts[0].mutableCopy();
+            }
+        }
+        
+        if(contactRecord){
+            var saveRequest = new CNSaveRequest();
+            saveRequest.deleteContact(contactRecord)
+            
+            var error;
+            store.executeSaveRequestError(saveRequest, error);
+            
+            if (error) {
+                throw new Error(error.localizedDescription);
+            }
+        }
+    };
+    
     return Contact;
 })(ContactCommon)
 

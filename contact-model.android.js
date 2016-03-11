@@ -342,9 +342,46 @@ var Contact = (function (_super) {
         }
         
         // Perform the save
-        contentResolver.applyBatch(android.provider.ContactsContract.AUTHORITY, ops);
+        var results = contentResolver.applyBatch(android.provider.ContactsContract.AUTHORITY, ops),
+        contactId = android.content.ContentUris.parseId(results[0].uri);
+        
+        //Update our id for new contacts so that we can do something else with them if we choose.
+        if(contactId !== this.id){
+            this.id = contactId;
+        }
     };
 
+    Contact.prototype.delete = function(){
+        var mgr = android.accounts.AccountManager.get(appModule.android.foregroundActivity),
+        accounts = mgr.getAccounts(),
+        id = this.id,
+        rawId = 0,
+        contentResolver = appModule.android.foregroundActivity.getContentResolver(),
+        ops = new java.util.ArrayList();
+
+        if (accounts.length === 0) {
+            throw new Error("No Accounts!");
+        }
+        
+        if (id && id !== "") {
+            var rawIdCursor = contentResolver.query(android.provider.ContactsContract.RawContacts.CONTENT_URI, ["_id"], "_id = " + id, null, null);
+            if (!rawIdCursor.moveToFirst()) {
+                throw new Error("Error optaining group id");
+                return;
+            }
+
+            rawId = rawIdCursor.getString(rawIdCursor.getColumnIndex("_id"));
+            rawIdCursor.close();
+
+            ops.add(android.content.ContentProviderOperation.newDelete(android.provider.ContactsContract.RawContacts.CONTENT_URI)
+                .withSelection("_id" + "=?", [rawId])
+                .build());
+            
+            // Perform the delete
+            contentResolver.applyBatch(android.provider.ContactsContract.AUTHORITY, ops);
+        }
+    };
+    
     return Contact;
 })(ContactCommon);
 
