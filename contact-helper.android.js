@@ -1,4 +1,3 @@
-
 var appModule = require("application");
 var KnownLabel = require("./known-label");
 
@@ -8,10 +7,24 @@ var RAW_CONTACT_ID = "raw_contact_id"; // android.provider.ContactsContract.Data
 var CONTACT_ID = "contact_id"; // android.provider.ContactsContract.Data.CONTACT_ID
 var MIMETYPE = "mimetype"; // android.provider.ContactsContract.Data.MIMETYPE
 
+/* 
+   inside a web worker appModule.android.context does not work (function by Nathanael)
+*/
+exports.getContext = function() {
+    if (appModule.android.context) {
+        return (appModule.android.context);
+    }
+    var ctx = java.lang.Class.forName("android.app.AppGlobals").getMethod("getInitialApplication", null).invoke(null, null);
+    if (ctx) return ctx;
+
+    ctx = java.lang.Class.forName("android.app.ActivityThread").getMethod("currentApplication", null).invoke(null, null);
+    return ctx;
+}
+
 //Query Sample: 
 //query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 exports.getBasicCursor = function(uri, id){
-    var contentResolver = appModule.android.context.getContentResolver(); 
+    var contentResolver = exports.getContext().getContentResolver(); 
     var cursor = contentResolver.query(uri, 
                                         null, 
                                         CONTACT_ID + "=" + id,
@@ -25,7 +38,7 @@ exports.getBasicCursor = function(uri, id){
 //projection: String[]
 //parameters: String[]
 exports.getComplexCursor = function(id, uri, projection, parameters){
-    var contentResolver = appModule.android.context.getContentResolver(); 
+    var contentResolver = exports.getContext().getContentResolver(); 
     var cursor = contentResolver.query(uri, 
                                     projection, 
                                     CONTACT_ID + "=? AND " + MIMETYPE + "=?",

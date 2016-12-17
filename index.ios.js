@@ -35,6 +35,7 @@ var CustomCNContactPickerViewControllerDelegate = NSObject.extend({
     protocols: [CNContactPickerDelegate]
 });
 
+
 exports.getContact = function (){
     return new Promise(function (resolve, reject) {  
         var controller = CNContactPickerViewController.alloc().init();
@@ -47,112 +48,38 @@ exports.getContact = function (){
         page.presentModalViewControllerAnimated(controller, true);
     });
 };
-exports.getContactsByName = function(searchPredicate){
+exports.getContactsByName = function(searchPredicate,contactFields){
     return new Promise(function (resolve, reject){
-        var store = new CNContactStore(),
-        error,
-        keysToFetch = [
-                "givenName", 
-                "familyName", 
-                "middleName", 
-                "namePrefix", 
-                "nameSuffix", 
-                "phoneticGivenName", 
-                "phoneticMiddleName", 
-                "phoneticFamilyName", 
-                "nickname", 
-                "jobTitle", 
-                "departmentName", 
-                "organizationName", 
-                "notes", 
-                "phoneNumbers", 
-                "emailAddresses", 
-                "postalAddresses", 
-                "urlAddresses", 
-                "imageData",
-                "imageDataAvailable"
-        ], // All Properties that we are using in the Model
-        foundContacts = store.unifiedContactsMatchingPredicateKeysToFetchError(CNContact.predicateForContactsMatchingName(searchPredicate), keysToFetch, error);
-        
-        if(error){
-            reject(error.localizedDescription);
-        }
-        
-        if (foundContacts.count > 0) {
-            var cts = [];
-            for(var i=0; i<foundContacts.count; i++){
-                var contactModel = new Contact();
-                contactModel.initializeFromNative(foundContacts[i]);
-                cts.push(contactModel);
-            }
-            resolve({
-                data: cts,
-                response: "fetch"
+        try {
+            let worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
+            worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
+            worker.onmessage = ((event) => {
+                if (event.data.type == 'debug') { console.log(event.data.message); }
+                else if (event.data.type == 'dump') { console.dump(event.data.message); }
+                else if (event.data.type == 'error') { reject(event.data.message); }
+                else {
+                    worker.terminate();
+                    resolve(event.data.message);
+                }
             });
-        }
-        else{
-            resolve({
-                data: null,
-                response: "fetch"
-            });
-        }
+        } catch (e) { reject(e); }
     });
 };
-exports.getAllContacts = function(){
-    return new Promise(function (resolve, reject){
-        var store = new CNContactStore(),
-        error,
-        keysToFetch = [
-                "givenName", 
-                "familyName", 
-                "middleName", 
-                "namePrefix", 
-                "nameSuffix", 
-                "phoneticGivenName", 
-                "phoneticMiddleName", 
-                "phoneticFamilyName", 
-                "nickname", 
-                "jobTitle", 
-                "departmentName", 
-                "organizationName", 
-                "notes", 
-                "phoneNumbers", 
-                "emailAddresses", 
-                "postalAddresses", 
-                "urlAddresses", 
-                "imageData",
-                "imageDataAvailable"
-        ], // All Properties that we are using in the Model
-        fetch = CNContactFetchRequest.alloc().initWithKeysToFetch(keysToFetch),
-        cts = [],
-        nativeMutableArray = new NSMutableArray();
-        
-        fetch.unifyResults = true;
-        fetch.predicate = null;
-        
-        store.enumerateContactsWithFetchRequestErrorUsingBlock(fetch, error, function(c,s){
-            nativeMutableArray.addObject(c);
-            var contactModel = new Contact();
-            contactModel.initializeFromNative(c);
-            cts.push(contactModel);
-        });
-        
-        if(error){
-            reject(error.localizedDescription);
-        }
-        
-        if(cts.length > 0){
-            resolve({
-                data: cts,
-                response: "fetch"
+exports.getAllContacts = function(contactFields) {
+    return new Promise(function (resolve, reject) {
+        try {
+            let worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
+            worker.postMessage({ "contactFields" : contactFields });
+            worker.onmessage = ((event) => {
+                if (event.data.type == 'debug') { console.log(event.data.message); }
+                else if (event.data.type == 'dump') { console.dump(event.data.message); }
+                else if (event.data.type == 'error') { reject(event.data.message); }
+                else {
+                    worker.terminate();
+                    resolve(event.data.message);
+                }
             });
-        }
-        else{
-            resolve({
-                data: null,
-                response: "fetch"
-            });
-        }
+        } catch (e) { reject(e); }
     });
 };
 exports.getGroups = function(name){

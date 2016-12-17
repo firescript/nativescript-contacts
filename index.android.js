@@ -2,6 +2,7 @@ var appModule = require("application");
 var Contact = require("./contact-model");
 var KnownLabel = require("./known-label");
 var Group = require("./group-model");
+var helper = require("./contact-helper");
 
 exports.getContact = function() {
     return new Promise(function(resolve, reject) {
@@ -19,7 +20,7 @@ exports.getContact = function() {
                         appModule.android.onActivityResult = previousResult;
                         
                         if (resultCode === android.app.Activity.RESULT_OK && data != null) {
-                            var contentResolver = appModule.android.context.getContentResolver(); 
+                            var contentResolver = helper.getContext().getContentResolver(); 
                             var pickedContactData = data.getData();
                             var mainCursor = contentResolver.query(pickedContactData, null, null, null, null);
                             mainCursor.moveToFirst();
@@ -61,58 +62,36 @@ exports.getContact = function() {
         }
     });
 };
-exports.getContactsByName = function(searchPredicate){
-    return new Promise(function (resolve, reject){
-        var Contacts = android.provider.ContactsContract.Contacts,
-        SELECTION = android.provider.ContactsContract.ContactNameColumns.DISPLAY_NAME_PRIMARY,
-        c = appModule.android.context.getContentResolver().query(Contacts.CONTENT_URI, null, SELECTION + " like ?", ["%" + searchPredicate + "%"], null);
-        
-        if(c.getCount() > 0){
-            var cts = [];
-            while(c.moveToNext()){
-                var contactModel = new Contact();
-                contactModel.initializeFromNative(c);
-                cts.push(contactModel);
-            }
-            c.close();
-            resolve({
-                data: cts,
-                response: "fetch"
+exports.getContactsByName = function(searchPredicate,contactFields) {
+    return new Promise(function (resolve, reject) {
+        try {
+            let worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
+            worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
+            worker.onmessage = ((event) => {
+                if (event.data.type == 'debug') { console.log(event.data.message); }
+                else if (event.data.type == 'dump') { console.dump(event.data.message); }
+                else {
+                    worker.terminate();
+                    resolve(event.data.message);
+                }
             });
-        }
-        else{
-            c.close();
-            resolve({
-                data: null,
-                response: "fetch"
-            });
-        }
+        } catch (e) { reject(e); }
     });
 };
-exports.getAllContacts = function(){
-    return new Promise(function (resolve, reject){
-        var c = appModule.android.context.getContentResolver().query(android.provider.ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-        
-        if(c.getCount() > 0){
-            var cts = [];
-            while(c.moveToNext()){
-                var contactModel = new Contact();
-                contactModel.initializeFromNative(c);
-                cts.push(contactModel);
-            }
-            c.close();
-            resolve({
-                data: cts,
-                response: "fetch"
+exports.getAllContacts = function(contactFields) {
+    return new Promise(function (resolve, reject) {
+        try {
+            let worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
+            worker.postMessage({ "contactFields" : contactFields });
+            worker.onmessage = ((event) => {
+                if (event.data.type == 'debug') { console.log(event.data.message); }
+                else if (event.data.type == 'dump') { console.dump(event.data.message); }
+                else {
+                    worker.terminate();
+                    resolve(event.data.message);
+                }
             });
-        }
-        else{
-            c.close();
-            resolve({
-                data: null,
-                response: "fetch"
-            });
-        }
+        } catch (e) { reject(e); }
     });
 };
 exports.getGroups = function(name){
@@ -122,10 +101,10 @@ exports.getGroups = function(name){
         groupCursor;
         
         if(name){
-            groupCursor = appModule.android.context.getContentResolver().query(aGroups.CONTENT_URI, null, aGroupColumns.TITLE + "=?", [name], null);
+            groupCursor = helper.getContext().getContentResolver().query(aGroups.CONTENT_URI, null, aGroupColumns.TITLE + "=?", [name], null);
         }
         else{
-            groupCursor = appModule.android.context.getContentResolver().query(aGroups.CONTENT_URI, null, null, null, null);
+            groupCursor = helper.getContext().getContentResolver().query(aGroups.CONTENT_URI, null, null, null, null);
         }
         
         if(groupCursor.getCount() > 0){
@@ -157,7 +136,7 @@ exports.getContactsInGroup=function(g){
     return new Promise(function (resolve, reject){
         var where =  android.provider.ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID +"=?" + " AND " + android.provider.ContactsContract.DataColumns.MIMETYPE + "=?",
         whereArgs = [g.id.toString(), android.provider.ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE],
-        groupCursor = appModule.android.context.getContentResolver().query(android.provider.ContactsContract.Data.CONTENT_URI, null, where, whereArgs, null);
+        groupCursor = helper.getContext().getContentResolver().query(android.provider.ContactsContract.Data.CONTENT_URI, null, where, whereArgs, null);
 
         if(groupCursor.getCount() > 0){
             var cts = [];
@@ -166,7 +145,7 @@ exports.getContactsInGroup=function(g){
                 var Contacts = android.provider.ContactsContract.Contacts,
                 SELECTION = "_id",
                 rawId = groupCursor.getString(groupCursor.getColumnIndex("raw_contact_id")),
-                c = appModule.android.context.getContentResolver().query(Contacts.CONTENT_URI, null, SELECTION + " = ?", [rawId], null);
+                c = helper.getContext().getContentResolver().query(Contacts.CONTENT_URI, null, SELECTION + " = ?", [rawId], null);
 
                 while(c.moveToNext()){
                     var contactModel = new Contact();

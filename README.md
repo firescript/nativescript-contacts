@@ -107,7 +107,13 @@ contacts.getContact().then(function(args){
 var app = require( "application" );
 var contacts = require( "nativescript-contacts" );
 
-contacts.getContactsByName("Hicks").then(function(args){
+/*
+  contactFields contains the fields to retrieve from native backend to reduce processing time
+  var contactFields = ['name','organization','nickname','notes','photo','urls','phoneNumbers','emailAddresses','postalAddresses']
+*/
+var contactFields = ['name','phoneNumbers']
+
+contacts.getContactsByName("Hicks",contactFields).then(function(args){
     console.log("getContactsByName Complete");
     console.log(JSON.stringify(args));
     /// Returns args:
@@ -124,7 +130,13 @@ contacts.getContactsByName("Hicks").then(function(args){
 var app = require( "application" );
 var contacts = require( "nativescript-contacts" );
 
-contacts.getAllContacts().then(function(args){
+/*
+  contactFields contains the fields to retrieve from native backend to reduce processing time
+  var contactFields = ['name','organization','nickname','notes','photo','urls','phoneNumbers','emailAddresses','postalAddresses']
+*/
+var contactFields = ['name','phoneNumbers']
+
+contacts.getAllContacts(contactFields).then(function(args){
     console.log("getAllContacts Complete");
     console.log(JSON.stringify(args));
     /// Returns args:
