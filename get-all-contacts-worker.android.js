@@ -7,22 +7,21 @@ function console_log(msg) { postMessage({ type: 'debug', message: msg }); }
 function console_dump(msg) { postMessage({ type: 'dump', message: msg }); }
 
 self.onmessage = function (event) {
-  // console_log('message received from main script');
-  // console_dump(event.data);
-  
-  var c = helper.getContext().getContentResolver().query(android.provider.ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+  try {
+    var c = helper.getContext().getContentResolver().query(android.provider.ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
-  if(c.getCount() > 0){
-    var cts = [];
-    while(c.moveToNext()){
-      var contactModel = new Contact();
-      contactModel.initializeFromNative(c,event.data.contactFields);
-      cts.push(contactModel);
+    if(c.getCount() > 0){
+      var cts = [];
+      while(c.moveToNext()){
+        var contactModel = new Contact();
+        contactModel.initializeFromNative(c,event.data.contactFields);
+        cts.push(contactModel);
+      }
+      c.close();
+      postMessage({ type: 'result', message: { data: cts, response: "fetch" }});
+    } else {
+      c.close();
+      postMessage({ type: 'result', message: { data: null, response: "fetch" }})
     }
-    c.close();
-    postMessage({ type: 'result', message: { data: cts, response: "fetch" }});
-  } else {
-    c.close();
-    postMessage({ type: 'result', message: { data: null, response: "fetch" }});    
-  }
+  } catch (e) { postMessage({ type: 'result', message: e }); }
 }

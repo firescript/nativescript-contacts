@@ -7,8 +7,6 @@ function console_log(msg) { postMessage({ type: 'debug', message: msg }); }
 function console_dump(msg) { postMessage({ type: 'dump', message: msg }); }
 
 self.onmessage = function (event) {
-  // console_log('message received from main script');
-  // console_dump(event.data);
   contactFields = event.data.contactFields;
   
   var keysToFetch = [];  // All Properties that we are using in the Model

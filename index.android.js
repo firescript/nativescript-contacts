@@ -62,36 +62,42 @@ exports.getContact = function() {
         }
     });
 };
-exports.getContactsByName = function(searchPredicate,contactFields) {
-    return new Promise(function (resolve, reject) {
-        try {
-            let worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
-            worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
-            worker.onmessage = ((event) => {
-                if (event.data.type == 'debug') { console.log(event.data.message); }
-                else if (event.data.type == 'dump') { console.dump(event.data.message); }
-                else {
-                    worker.terminate();
-                    resolve(event.data.message);
-                }
-            });
-        } catch (e) { reject(e); }
+exports.getContactsByName = (searchPredicate,contactFields) => {
+    return new Promise((resolve, reject) => {
+        let worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
+        worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
+        worker.onmessage = ((event) => {
+            if (event.data.type == 'debug') { console.log(event.data.message); }
+            else if (event.data.type == 'dump') { console.dump(event.data.message); }
+            else if (event.data.type == 'result') {
+                worker.terminate();
+                // add nativescript image-source object to photo property since it does not work inside web worker
+                if (contactFields.indexOf('photo') > -1) { resolve(helper.addImageSources(event.data.message)); }
+                else { resolve(event.data.message); }
+            }
+        });
+        worker.onerror = ((e) => {
+            console.dump(e);
+        });
     });
 };
-exports.getAllContacts = function(contactFields) {
-    return new Promise(function (resolve, reject) {
-        try {
-            let worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
-            worker.postMessage({ "contactFields" : contactFields });
-            worker.onmessage = ((event) => {
-                if (event.data.type == 'debug') { console.log(event.data.message); }
-                else if (event.data.type == 'dump') { console.dump(event.data.message); }
-                else {
-                    worker.terminate();
-                    resolve(event.data.message);
-                }
-            });
-        } catch (e) { reject(e); }
+exports.getAllContacts = (contactFields) => {
+    return new Promise((resolve, reject) => {
+        let worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
+        worker.postMessage({ "contactFields" : contactFields });
+        worker.onmessage = ((event) => {
+            if (event.data.type == 'debug') { console.log(event.data.message); }
+            else if (event.data.type == 'dump') { console.dump(event.data.message); }
+            else if (event.data.type == 'result') {
+                worker.terminate();
+                // add nativescript image-source object to photo property since it does not work inside web worker
+                if (contactFields.indexOf('photo') > -1) { resolve(helper.addImageSources(event.data.message)); }
+                else { resolve(event.data.message); }
+            }
+        });
+        worker.onerror = ((e) => {
+            console.dump(e);
+        });
     });
 };
 exports.getGroups = function(name){

@@ -50,36 +50,38 @@ exports.getContact = function (){
 };
 exports.getContactsByName = function(searchPredicate,contactFields){
     return new Promise(function (resolve, reject){
-        try {
-            let worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
-            worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
-            worker.onmessage = ((event) => {
-                if (event.data.type == 'debug') { console.log(event.data.message); }
-                else if (event.data.type == 'dump') { console.dump(event.data.message); }
-                else if (event.data.type == 'error') { reject(event.data.message); }
-                else {
-                    worker.terminate();
-                    resolve(event.data.message);
-                }
-            });
-        } catch (e) { reject(e); }
+        let worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
+        worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
+        worker.onmessage = ((event) => {
+            if (event.data.type == 'debug') { console.log(event.data.message); }
+            else if (event.data.type == 'dump') { console.dump(event.data.message); }
+            else if (event.data.type == 'error') { reject(event.data.message); }
+            else {
+                worker.terminate();
+                resolve(event.data.message);
+            }
+        });
+        worker.onerror = ((e) => {
+            console.dump(e);
+        });
     });
 };
 exports.getAllContacts = function(contactFields) {
     return new Promise(function (resolve, reject) {
-        try {
-            let worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
-            worker.postMessage({ "contactFields" : contactFields });
-            worker.onmessage = ((event) => {
-                if (event.data.type == 'debug') { console.log(event.data.message); }
-                else if (event.data.type == 'dump') { console.dump(event.data.message); }
-                else if (event.data.type == 'error') { reject(event.data.message); }
-                else {
-                    worker.terminate();
-                    resolve(event.data.message);
-                }
-            });
-        } catch (e) { reject(e); }
+        let worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
+        worker.postMessage({ "contactFields" : contactFields });
+        worker.onmessage = ((event) => {
+            if (event.data.type == 'debug') { console.log(event.data.message); }
+            else if (event.data.type == 'dump') { console.dump(event.data.message); }
+            else if (event.data.type == 'error') { reject(event.data.message); }
+            else {
+                worker.terminate();
+                resolve(event.data.message);
+            }
+        });
+        worker.onerror = ((e) => {
+            console.dump(e);
+        });
     });
 };
 exports.getGroups = function(name){

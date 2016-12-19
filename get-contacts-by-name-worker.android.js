@@ -6,32 +6,31 @@ var helper = require("./contact-helper");
 function console_log(msg) { postMessage({ type: 'debug', message: msg }); }
 function console_dump(msg) { postMessage({ type: 'dump', message: msg }); }
 
-self.onmessage = function (event) {
-  // console_log('message received from main script');
-  // console_dump(event.data);
-  
-  var Contacts = android.provider.ContactsContract.Contacts,
-  SELECTION = android.provider.ContactsContract.ContactNameColumns.DISPLAY_NAME_PRIMARY,
-  c = helper.getContext().getContentResolver().query(
-    Contacts.CONTENT_URI,
-    null,
-    SELECTION + " like ?",
-    ["%" + event.data.searchPredicate + "%"],
-    null
-  );
-  
-  if(c.getCount() > 0){
-    var cts = [];
-    while(c.moveToNext()){
-      var contactModel = new Contact();
-      contactModel.initializeFromNative(c,event.data.contactFields);
-      cts.push(contactModel);
+self.onmessage = (event) => {
+  try {
+    var Contacts = android.provider.ContactsContract.Contacts,
+    SELECTION = android.provider.ContactsContract.ContactNameColumns.DISPLAY_NAME_PRIMARY;
+    var c = helper.getContext().getContentResolver().query(
+      Contacts.CONTENT_URI,
+      null,
+      SELECTION + " like ?",
+      ["%" + event.data.searchPredicate + "%"],
+      null
+    );
+
+    if(c.getCount() > 0){
+      var cts = [];
+      while(c.moveToNext()){
+        var contactModel = new Contact();
+        contactModel.initializeFromNative(c,event.data.contactFields);
+        cts.push(contactModel);
+      }
+      c.close();
+      postMessage({ type: 'result', message: { data: cts, response: "fetch" }});
     }
-    c.close();
-    postMessage({ type: 'result', message: { data: cts, response: "fetch" }});
-  }
-  else{
-    c.close();
-    postMessage({ type: 'result', message: { data: null, response: "fetch" }});
-  }
+    else{
+      c.close();
+      postMessage({ type: 'result', message: { data: null, response: "fetch" }});
+    }
+  } catch (e) { postMessage({ type: 'result', message: e }); }
 }

@@ -1,5 +1,6 @@
 var appModule = require("application");
 var KnownLabel = require("./known-label");
+var imageSource = require("image-source");
 
 /* missing constants from the {N} */
 var TYPE_CUSTOM = 0;
@@ -10,7 +11,7 @@ var MIMETYPE = "mimetype"; // android.provider.ContactsContract.Data.MIMETYPE
 /* 
    inside a web worker appModule.android.context does not work (function by Nathanael)
 */
-exports.getContext = function() {
+exports.getContext = () => {
     if (appModule.android.context) {
         return (appModule.android.context);
     }
@@ -19,7 +20,25 @@ exports.getContext = function() {
 
     ctx = java.lang.Class.forName("android.app.ActivityThread").getMethod("currentApplication", null).invoke(null, null);
     return ctx;
-}
+};
+
+/*
+   add nativescript image-source object to photo property - does not work from inside a web worker
+*/
+exports.addImageSources = (message) => {
+    try {
+        message.data.forEach((contact) => {
+            if (contact.hasOwnProperty('photo') && contact.photo.hasOwnProperty('photo_uri')) {
+                var bitmap = android.provider.MediaStore.Images.Media.getBitmap(
+                    appModule.android.foregroundActivity.getContentResolver(),
+                    android.net.Uri.parse(contact.photo.photo_uri)
+                );
+                Object.assign(contact.photo, imageSource.fromNativeSource(bitmap));
+           }
+       });
+    } catch(e) { console.dump(e); }
+    return message;
+};
 
 //Query Sample: 
 //query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)

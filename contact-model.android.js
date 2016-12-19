@@ -1,6 +1,5 @@
 var helper = require("./contact-helper");
 var appModule = require("application");
-var imageSource = require("image-source")
 var ContactCommon = require("./contact-model-common");
 
 /* missing constants from the {N} */
@@ -31,14 +30,19 @@ var Contact = (function (_super) {
         var mainCursorJson = helper.convertNativeCursorToJson(cursor);
         this.id = mainCursorJson["_id"];
         
-        if (contactFields.indexOf('photo') > -1) {
+        if (contactFields.indexOf('photo') > -1 && mainCursorJson[PHOTO_URI]) {
+            /*
+                appModule.android.foregroundActivity is not available inside web worker
+                handling this from outside the worker in index.android.js
+                instead just adding PHOTO_URI to photo object
+             */
             // Get photo
-            if (mainCursorJson[PHOTO_URI]) {
-                var bitmap = android.provider.MediaStore.Images.Media.getBitmap(appModule.android.foregroundActivity.getContentResolver(), 
-                                                                                android.net.Uri.parse(mainCursorJson[PHOTO_URI]));
-
-                this.photo = imageSource.fromNativeSource(bitmap)
-            }
+            // var bitmap = android.provider.MediaStore.Images.Media.getBitmap(
+            //     appModule.android.foregroundActivity.getContentResolver(),
+            //     android.net.Uri.parse(mainCursorJson[PHOTO_URI])
+            // );
+            // this.photo = imageSource.fromNativeSource(bitmap);
+            this.photo = { 'photo_uri': mainCursorJson[PHOTO_URI] };
         } else { delete this.photo; }
 
         if (contactFields.indexOf('name') > -1) {
