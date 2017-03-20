@@ -9,7 +9,10 @@ var Contact = (function (_super) {
         _super.apply(this, arguments);
     }
 
-    Contact.prototype.initializeFromNative = function(contactData) {
+    Contact.prototype.initializeFromNative = function(
+        contactData, 
+        contactFields = ['name','organization','nickname','notes','photo','urls','phoneNumbers','emailAddresses','postalAddresses']
+    ) {
         this.id = helper.getiOSValue("identifier", contactData);
         
         //NAME
@@ -31,11 +34,11 @@ var Contact = (function (_super) {
         
         this.notes = helper.getiOSValue("notes", contactData);
         
-        if (contactData.imageDataAvailable) {
+        if (contactFields.indexOf('photo') > -1 && contactData.imageDataAvailable) {
             this.photo = imageSource.fromData(contactData.imageData);
-        }
+        } else { delete this.photo; }
         
-        if(contactData.phoneNumbers.count > 0){
+        if(contactFields.indexOf('phoneNumbers') > -1 && contactData.phoneNumbers.count > 0) {
             for(var i = 0; i < contactData.phoneNumbers.count; i++){
                 var pdata = contactData.phoneNumbers[i];
                 this.phoneNumbers.push(
@@ -45,9 +48,9 @@ var Contact = (function (_super) {
                         value: pdata.value.stringValue
                     });
             }
-        }
+        } else { delete this.phoneNumbers; }
         
-        if(contactData.emailAddresses.count > 0){
+        if (contactFields.indexOf('emailAddresses') > -1 && contactData.emailAddresses.count > 0) {
             for(var i = 0; i < contactData.emailAddresses.count; i++){
                 var edata = contactData.emailAddresses[i];
                 this.emailAddresses.push(
@@ -57,9 +60,9 @@ var Contact = (function (_super) {
                         value: edata.value
                     });
             }
-        }
+        } else { delete this.emailAddresses; }
         
-        if(contactData.postalAddresses.count > 0){
+        if (contactFields.indexOf('postalAddresses') > -1 && contactData.postalAddresses.count > 0) {
             for(var i = 0; i < contactData.postalAddresses.count; i++){
                 var postaldata = contactData.postalAddresses[i];
                 this.postalAddresses.push(
@@ -77,9 +80,9 @@ var Contact = (function (_super) {
                         }
                     });
             }
-        }
+        } else { delete this.postalAddresses; }
         
-        if(contactData.urlAddresses.count > 0){
+        if (contactFields.indexOf('urlAddresses') > -1 && contactData.urlAddresses.count > 0) {
             for(var i = 0; i < contactData.urlAddresses.count; i++){
                 var urldata = contactData.urlAddresses[i];
                 this.urls.push(
@@ -88,7 +91,7 @@ var Contact = (function (_super) {
                         value: urldata.value
                     });
             }
-        }
+        } else { delete this.urlAddresses; }
     };
     
     Contact.prototype.save = function () {

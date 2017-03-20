@@ -1,6 +1,5 @@
 var helper = require("./contact-helper");
 var appModule = require("application");
-var imageSource = require("image-source")
 var ContactCommon = require("./contact-model-common");
 
 /* missing constants from the {N} */
@@ -24,166 +23,194 @@ var Contact = (function (_super) {
         this.organization.type = "";
     }
 
-    Contact.prototype.initializeFromNative = function (cursor) {
+    Contact.prototype.initializeFromNative = function (
+        cursor,
+        contactFields = ['name','organization','nickname','notes','photo','urls','phoneNumbers','emailAddresses','postalAddresses']
+    ) {
         var mainCursorJson = helper.convertNativeCursorToJson(cursor);
         this.id = mainCursorJson["_id"];
         
-        // Get photo
-        if (mainCursorJson[PHOTO_URI]) {
-            var bitmap = android.provider.MediaStore.Images.Media.getBitmap(appModule.android.foregroundActivity.getContentResolver(), 
-                                                                            android.net.Uri.parse(mainCursorJson[PHOTO_URI]));
+        if (contactFields.indexOf('photo') > -1 && mainCursorJson[PHOTO_URI]) {
+            /*
+                appModule.android.foregroundActivity is not available inside web worker
+                handling this from outside the worker in index.android.js
+                instead just adding PHOTO_URI to photo object
+             */
+            // Get photo
+            // var bitmap = android.provider.MediaStore.Images.Media.getBitmap(
+            //     appModule.android.foregroundActivity.getContentResolver(),
+            //     android.net.Uri.parse(mainCursorJson[PHOTO_URI])
+            // );
+            // this.photo = imageSource.fromNativeSource(bitmap);
+            this.photo = { 'photo_uri': mainCursorJson[PHOTO_URI] };
+        } else { delete this.photo; }
 
-            this.photo = imageSource.fromNativeSource(bitmap)
-        }
+        if (contactFields.indexOf('name') > -1) {
         
-        //Get Basic User Details
-        var userNameParameters = [
-            this.id.toString(),
-            "vnd.android.cursor.item/name" //ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
-        ];
-        var usernameCursor = helper.getComplexCursor(this.id,
+            //Get Basic User Details
+            var userNameParameters = [
+                this.id.toString(),
+                "vnd.android.cursor.item/name" //ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
+            ];
+            var usernameCursor = helper.getComplexCursor(this.id,
+                                                        android.provider.ContactsContract.Data.CONTENT_URI,
+                                                        null,
+                                                        userNameParameters);
+            usernameCursor.moveToFirst();
+            var usernameCursorJson = helper.convertNativeCursorToJson(usernameCursor);
+            this.name.given = usernameCursorJson["data2"];
+            this.name.middle = usernameCursorJson["data5"];
+            this.name.family = usernameCursorJson["data3"];
+            this.name.prefix = usernameCursorJson["data4"];
+            this.name.suffix = usernameCursorJson["data6"];
+            this.name.displayname = usernameCursorJson["data1"];
+
+            this.name.phonetic.given = usernameCursorJson["data7"];
+            this.name.phonetic.middle = usernameCursorJson["data8"];
+            this.name.phonetic.family = usernameCursorJson["data9"];
+            usernameCursor.close();
+        } else { delete this.name; }
+
+        if (contactFields.indexOf('nickname') > -1) {
+            //Get Nickname
+            var nickNameParameters = [
+                this.id.toString(),
+                "vnd.android.cursor.item/nickname" //ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE
+            ];
+
+            var nicknameCursor = helper.getComplexCursor(this.id,
+                                                        android.provider.ContactsContract.Data.CONTENT_URI,
+                                                        ["data1"],
+                                                        nickNameParameters);
+            if (nicknameCursor.getCount() > 0) {
+                nicknameCursor.moveToFirst();
+                var nicknameCursorJson = helper.convertNativeCursorToJson(nicknameCursor);
+                this.nickname = nicknameCursorJson["data1"];
+            }
+            nicknameCursor.close();
+        } else { delete this.nickname; }
+
+        if (contactFields.indexOf('phoneNumbers') > -1) {
+            //Get phone
+            var hasPhone = mainCursorJson["has_phone_number"];
+            if (hasPhone === 1) {
+                var phoneCursor = helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI, this.id);
+                while (phoneCursor.moveToNext()) {
+                    var phoneCursorJson = helper.convertNativeCursorToJson(phoneCursor);
+                    this.phoneNumbers.push(
+                        {
+                            id: "",
+                            label: helper.getPhoneType(phoneCursorJson["data2"], phoneCursorJson["data3"]),
+                            value: phoneCursorJson["data1"]
+                        });
+                };
+                phoneCursor.close();
+            }
+        } else { delete this.phoneNumbers; }
+
+        if (contactFields.indexOf('emailAddresses') > -1) {
+            //Get email
+            var emailCursor = helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_URI, this.id);
+            while (emailCursor.moveToNext()) {
+                var emailCursorJson = helper.convertNativeCursorToJson(emailCursor);
+                this.emailAddresses.push(
+                {
+                    id: emailCursorJson["_id"],
+                    label: helper.getEmailType(emailCursorJson["data2"], emailCursorJson["data3"]),
+                    value: emailCursorJson["data1"]
+                });
+            };
+            emailCursor.close();
+        } else { delete this.emailAddresses; }
+
+        if (contactFields.indexOf('emailAddresses') > -1) {
+
+            //Get addresses
+            var postalCursor = helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI, this.id);
+            while (postalCursor.moveToNext()) {
+                var postalCursorJson = helper.convertNativeCursorToJson(postalCursor);
+
+                this.postalAddresses.push(
+                {
+                    id: postalCursorJson["_id"],
+                    label: helper.getAddressType(postalCursorJson["data2"], postalCursorJson["data3"]),
+                    location: {
+                        street: postalCursorJson["data4"],
+                        city: postalCursorJson["data7"],
+                        state: postalCursorJson["data8"],
+                        postalCode: postalCursorJson["data9"],
+                        country: postalCursorJson["data10"],
+                        countryCode: postalCursorJson[""],
+                        formatted: postalCursorJson["data1"]
+                    }
+                });
+            };
+            postalCursor.close();
+        } else { delete this.postalAddresses; }
+
+        if (contactFields.indexOf('notes') > -1) {
+            //Get Notes
+            var notesParameters = [
+                this.id.toString(),
+                "vnd.android.cursor.item/note" //ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
+            ];
+            var notesCursor = helper.getComplexCursor(this.id,
+                                                                android.provider.ContactsContract.Data.CONTENT_URI,
+                                                                ["data1"],
+                                                                notesParameters);
+            if (notesCursor.getCount() > 0) {
+                notesCursor.moveToFirst();
+                var notesCursorJson = helper.convertNativeCursorToJson(notesCursor);
+                this.notes = notesCursorJson["data1"];
+            }
+            notesCursor.close();
+        } else { delete this.notes; }
+
+        if (contactFields.indexOf('urls') > -1) {
+            //Get Websites
+            var websitesParameters = [
+                this.id.toString(),
+                "vnd.android.cursor.item/website" //ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE
+            ];
+            var websitesCursor = helper.getComplexCursor(this.id,
+                                                                android.provider.ContactsContract.Data.CONTENT_URI,
+                                                                null,
+                                                                websitesParameters);
+            while (websitesCursor.moveToNext()) {
+                var websitesCursorJson = helper.convertNativeCursorToJson(websitesCursor);
+
+                this.urls.push(
+                {
+                    label: helper.getWebsiteType(websitesCursorJson["data2"], websitesCursorJson["data3"]),
+                    value: websitesCursorJson["data1"]
+                });
+            };
+            websitesCursor.close();
+        } else { delete this.urls; }
+
+        if (contactFields.indexOf('organization') > -1) {
+            //Get Organization
+            var orgParameters = [
+                this.id.toString(),
+                "vnd.android.cursor.item/organization" //ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE
+            ];
+            var orgCursor = helper.getComplexCursor(this.id,
                                                     android.provider.ContactsContract.Data.CONTENT_URI,
                                                     null,
-                                                    userNameParameters);
-        usernameCursor.moveToFirst();
-        var usernameCursorJson = helper.convertNativeCursorToJson(usernameCursor);
-        this.name.given = usernameCursorJson["data2"];
-        this.name.middle = usernameCursorJson["data5"];
-        this.name.family = usernameCursorJson["data3"];
-        this.name.prefix = usernameCursorJson["data4"];
-        this.name.suffix = usernameCursorJson["data6"];
-        this.name.displayname = usernameCursorJson["data1"];
-
-        this.name.phonetic.given = usernameCursorJson["data7"];
-        this.name.phonetic.middle = usernameCursorJson["data8"];
-        this.name.phonetic.family = usernameCursorJson["data9"];
-        usernameCursor.close();
-
-        //Get Nickname
-        var nickNameParameters = [
-            this.id.toString(),
-            "vnd.android.cursor.item/nickname" //ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE
-        ];
-
-        var nicknameCursor = helper.getComplexCursor(this.id,
-                                                    android.provider.ContactsContract.Data.CONTENT_URI,
-                                                    ["data1"],
-                                                    nickNameParameters);
-        if (nicknameCursor.getCount() > 0) {
-            nicknameCursor.moveToFirst();
-            var nicknameCursorJson = helper.convertNativeCursorToJson(nicknameCursor);
-            this.nickname = nicknameCursorJson["data1"];
-        }
-        nicknameCursor.close();
-
-        //Get phone
-        var hasPhone = mainCursorJson["has_phone_number"];
-        if (hasPhone === 1) {
-            var phoneCursor = helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI, this.id);
-            while (phoneCursor.moveToNext()) {
-                var phoneCursorJson = helper.convertNativeCursorToJson(phoneCursor);
-                this.phoneNumbers.push(
-                    {
-                        id: "",
-                        label: helper.getPhoneType(phoneCursorJson["data2"], phoneCursorJson["data3"]),
-                        value: phoneCursorJson["data1"]
-                    });
-            };
-            phoneCursor.close();
-        }
-
-        //Get email
-        var emailCursor = helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.Email.CONTENT_URI, this.id);
-        while (emailCursor.moveToNext()) {
-            var emailCursorJson = helper.convertNativeCursorToJson(emailCursor);
-            this.emailAddresses.push(
-            {
-                id: emailCursorJson["_id"],
-                label: helper.getEmailType(emailCursorJson["data2"], emailCursorJson["data3"]),
-                value: emailCursorJson["data1"]
-            });
-        };
-        emailCursor.close();
-
-        //Get addresses
-        var postalCursor = helper.getBasicCursor(android.provider.ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI, this.id);
-        while (postalCursor.moveToNext()) {
-            var postalCursorJson = helper.convertNativeCursorToJson(postalCursor);
-
-            this.postalAddresses.push(
-            {
-                id: postalCursorJson["_id"],
-                label: helper.getAddressType(postalCursorJson["data2"], postalCursorJson["data3"]),
-                location: {
-                    street: postalCursorJson["data4"],
-                    city: postalCursorJson["data7"],
-                    state: postalCursorJson["data8"],
-                    postalCode: postalCursorJson["data9"],
-                    country: postalCursorJson["data10"],
-                    countryCode: postalCursorJson[""],
-                    formatted: postalCursorJson["data1"]
-                }
-            });
-        };
-        postalCursor.close();
-
-        //Get Notes
-        var notesParameters = [
-            this.id.toString(),
-            "vnd.android.cursor.item/note" //ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
-        ];
-        var notesCursor = helper.getComplexCursor(this.id,
-                                                            android.provider.ContactsContract.Data.CONTENT_URI,
-                                                            ["data1"],
-                                                            notesParameters);
-        if (notesCursor.getCount() > 0) {
-            notesCursor.moveToFirst();
-            var notesCursorJson = helper.convertNativeCursorToJson(notesCursor);
-            this.notes = notesCursorJson["data1"];
-        }
-        notesCursor.close();
-
-        //Get Websites
-        var websitesParameters = [
-            this.id.toString(),
-            "vnd.android.cursor.item/website" //ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE
-        ];
-        var websitesCursor = helper.getComplexCursor(this.id,
-                                                            android.provider.ContactsContract.Data.CONTENT_URI,
-                                                            null,
-                                                            websitesParameters);
-        while (websitesCursor.moveToNext()) {
-            var websitesCursorJson = helper.convertNativeCursorToJson(websitesCursor);
-
-            this.urls.push(
-            {
-                label: helper.getWebsiteType(websitesCursorJson["data2"], websitesCursorJson["data3"]),
-                value: websitesCursorJson["data1"]
-            });
-        };
-        websitesCursor.close();
-
-        //Get Organization
-        var orgParameters = [
-            this.id.toString(),
-            "vnd.android.cursor.item/organization" //ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE
-        ];
-        var orgCursor = helper.getComplexCursor(this.id,
-                                                android.provider.ContactsContract.Data.CONTENT_URI,
-                                                null,
-                                                orgParameters);
-        if (orgCursor.getCount() > 0) {
-            orgCursor.moveToFirst();
-            var orgCursorJson = helper.convertNativeCursorToJson(orgCursor);
-            this.organization.jobTitle = orgCursorJson["data4"];
-            this.organization.name = orgCursorJson["data1"];
-            this.organization.department = orgCursorJson["data5"];
-            this.organization.symbol = orgCursorJson["data7"];
-            this.organization.phonetic = orgCursorJson["data8"];
-            this.organization.location = orgCursorJson["data9"];
-            this.organization.type = helper.getOrgType(orgCursorJson["data2"], orgCursorJson["data3"]);
-        }
-        orgCursor.close();
+                                                    orgParameters);
+            if (orgCursor.getCount() > 0) {
+                orgCursor.moveToFirst();
+                var orgCursorJson = helper.convertNativeCursorToJson(orgCursor);
+                this.organization.jobTitle = orgCursorJson["data4"];
+                this.organization.name = orgCursorJson["data1"];
+                this.organization.department = orgCursorJson["data5"];
+                this.organization.symbol = orgCursorJson["data7"];
+                this.organization.phonetic = orgCursorJson["data8"];
+                this.organization.location = orgCursorJson["data9"];
+                this.organization.type = helper.getOrgType(orgCursorJson["data2"], orgCursorJson["data3"]);
+            }
+            orgCursor.close();
+        } else { delete this.organization; }
     }
 
     Contact.prototype.save = function () {

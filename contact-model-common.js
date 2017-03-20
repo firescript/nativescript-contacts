@@ -33,7 +33,7 @@ var Contact = (function () {
         this.postalAddresses = [];
     } 
     
-    Contact.prototype.initializeFromNative = function(nativeData) {
+    Contact.prototype.initializeFromNative = function(nativeData,contactFields) {
         // Abstract Method
     };
 

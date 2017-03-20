@@ -1,6 +1,6 @@
-
 var appModule = require("application");
 var KnownLabel = require("./known-label");
+var imageSource = require("image-source");
 
 /* missing constants from the {N} */
 var TYPE_CUSTOM = 0;
@@ -8,10 +8,42 @@ var RAW_CONTACT_ID = "raw_contact_id"; // android.provider.ContactsContract.Data
 var CONTACT_ID = "contact_id"; // android.provider.ContactsContract.Data.CONTACT_ID
 var MIMETYPE = "mimetype"; // android.provider.ContactsContract.Data.MIMETYPE
 
+/* 
+   inside a web worker appModule.android.context does not work (function by Nathanael)
+*/
+exports.getContext = () => {
+    if (appModule.android.context) {
+        return (appModule.android.context);
+    }
+    var ctx = java.lang.Class.forName("android.app.AppGlobals").getMethod("getInitialApplication", null).invoke(null, null);
+    if (ctx) return ctx;
+
+    ctx = java.lang.Class.forName("android.app.ActivityThread").getMethod("currentApplication", null).invoke(null, null);
+    return ctx;
+};
+
+/*
+   add nativescript image-source object to photo property - does not work from inside a web worker
+*/
+exports.addImageSources = (message) => {
+    try {
+        message.data.forEach((contact) => {
+            if (contact.hasOwnProperty('photo') && contact.photo.hasOwnProperty('photo_uri')) {
+                var bitmap = android.provider.MediaStore.Images.Media.getBitmap(
+                    appModule.android.foregroundActivity.getContentResolver(),
+                    android.net.Uri.parse(contact.photo.photo_uri)
+                );
+                Object.assign(contact.photo, imageSource.fromNativeSource(bitmap));
+           }
+       });
+    } catch(e) { console.dump(e); }
+    return message;
+};
+
 //Query Sample: 
 //query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 exports.getBasicCursor = function(uri, id){
-    var contentResolver = appModule.android.context.getContentResolver(); 
+    var contentResolver = exports.getContext().getContentResolver(); 
     var cursor = contentResolver.query(uri, 
                                         null, 
                                         CONTACT_ID + "=" + id,
@@ -25,7 +57,7 @@ exports.getBasicCursor = function(uri, id){
 //projection: String[]
 //parameters: String[]
 exports.getComplexCursor = function(id, uri, projection, parameters){
-    var contentResolver = appModule.android.context.getContentResolver(); 
+    var contentResolver = exports.getContext().getContentResolver(); 
     var cursor = contentResolver.query(uri, 
                                     projection, 
                                     CONTACT_ID + "=? AND " + MIMETYPE + "=?",
