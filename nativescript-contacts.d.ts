@@ -67,7 +67,7 @@ declare module "nativescript-contacts" {
         public save();
     }
 
-    export interface KnownLabel {
+    export var KnownLabel: {
         HOME: string;
         MOBILE: string;
         WORK: string;
