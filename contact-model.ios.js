@@ -9,10 +9,9 @@ var Contact = (function (_super) {
         _super.apply(this, arguments);
     }
 
-    Contact.prototype.initializeFromNative = function(
-        contactData, 
-        contactFields = ['name','organization','nickname','notes','photo','urls','phoneNumbers','emailAddresses','postalAddresses']
-    ) {
+    Contact.prototype.initializeFromNative = function(contactData, contactFields) {
+        contactFields = contactFields || ['name','organization','nickname','notes','photo','urls','phoneNumbers','emailAddresses','postalAddresses']
+        
         this.id = helper.getiOSValue("identifier", contactData);
         
         //NAME
