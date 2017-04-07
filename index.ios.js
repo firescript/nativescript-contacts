@@ -50,9 +50,9 @@ exports.getContact = function (){
 };
 exports.getContactsByName = function(searchPredicate,contactFields){
     return new Promise(function (resolve, reject){
-        let worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
+        var worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
         worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
-        worker.onmessage = ((event) => {
+        worker.onmessage = function (event) {
             if (event.data.type == 'debug') { console.log(event.data.message); }
             else if (event.data.type == 'dump') { console.dump(event.data.message); }
             else if (event.data.type == 'error') { reject(event.data.message); }
@@ -60,17 +60,17 @@ exports.getContactsByName = function(searchPredicate,contactFields){
                 worker.terminate();
                 resolve(event.data.message);
             }
-        });
-        worker.onerror = ((e) => {
+        };
+        worker.onerror = function (e) {
             console.dump(e);
-        });
+        };
     });
 };
 exports.getAllContacts = function(contactFields) {
     return new Promise(function (resolve, reject) {
-        let worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
+        var worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
         worker.postMessage({ "contactFields" : contactFields });
-        worker.onmessage = ((event) => {
+        worker.onmessage = function (event) {
             if (event.data.type == 'debug') { console.log(event.data.message); }
             else if (event.data.type == 'dump') { console.dump(event.data.message); }
             else if (event.data.type == 'error') { reject(event.data.message); }
@@ -78,10 +78,10 @@ exports.getAllContacts = function(contactFields) {
                 worker.terminate();
                 resolve(event.data.message);
             }
-        });
-        worker.onerror = ((e) => {
+        };
+        worker.onerror = function (e) {
             console.dump(e);
-        });
+        };
     });
 };
 exports.getGroups = function(name){
