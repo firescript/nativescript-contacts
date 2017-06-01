@@ -83,7 +83,7 @@ contacts.getContact().then(function(args){
 });
 ```
 
-####Delete a contact
+#### Delete a contact
 
 ```js
 var app = require( "application" );
@@ -101,7 +101,7 @@ contacts.getContact().then(function(args){
 });
 ```
 
-####getContactsByName: Find all contacts whose name matches. Returns an array of contact data.
+#### getContactsByName: Find all contacts whose name matches. Returns an array of contact data.
 
 ```js
 var app = require( "application" );
@@ -124,7 +124,7 @@ contacts.getContactsByName("Hicks",contactFields).then(function(args){
 });
 ```
 
-####getAllContacts: Find all contacts. Returns an array of contact data.
+#### getAllContacts: Find all contacts. Returns an array of contact data.
 
 ```js
 var app = require( "application" );
@@ -147,7 +147,7 @@ contacts.getAllContacts(contactFields).then(function(args){
 });
 ```
 
-####getGroups: Find groups. Returns an array of group data.
+#### getGroups: Find groups. Returns an array of group data.
 
 ```js
 var app = require( "application" );
@@ -173,7 +173,7 @@ contacts.getGroups("Test Group") //[name] optional. If defined will look for gro
     });
 ```
 
-####Save a new group
+#### Save a new group
 
 ```js
 var app = require( "application" );
@@ -187,7 +187,7 @@ groupModel.name="Test Group";
 groupModel.save(false); 
 ```
 
-####Delete a group
+#### Delete a group
 
 ```js
 var app = require( "application" );
@@ -210,7 +210,7 @@ contacts.getGroups("Test Group")
 });
 ```
 
-####Add Member To Group
+#### Add Member To Group
 ```js
 var app = require( "application" );
 var contacts = require( "nativescript-contacts" );
@@ -235,7 +235,7 @@ contacts.getContact().then(function(args){
 });
 ```
 
-####Remove Member From Group
+#### Remove Member From Group
 ```js
 var app = require( "application" );
 var contacts = require( "nativescript-contacts" );
@@ -265,7 +265,7 @@ contacts.getGroups("Test Group") //[name] optional. If defined will look for gro
 });
 ```
 
-####getContactsInGroup: Get all contacts in a group. Returns an array of contact data.
+#### getContactsInGroup: Get all contacts in a group. Returns an array of contact data.
 
 ```js
 var app = require( "application" );
