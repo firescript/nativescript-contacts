@@ -57,7 +57,7 @@ exports.getContact = function() {
                         }
                         break;
                 }
-            };
+            });
             
             appModule.android.foregroundActivity.startActivityForResult(openContactsIntent, PICK_CONTACT);
         } catch (e) {
