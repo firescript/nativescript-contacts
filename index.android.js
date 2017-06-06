@@ -14,7 +14,12 @@ exports.getContact = function() {
             
             var previousResult = appModule.android.onActivityResult;
             
-            appModule.android.onActivityResult = function(requestCode, resultCode, data) {
+            appModule.android.on("activityResult", function(eventData) {
+                
+                var requestCode = eventData.requestCode;
+                var resultCode = eventData.resultCode;
+                var data = eventData.intent;
+
                 switch (requestCode) {
                     case PICK_CONTACT:
                         appModule.android.onActivityResult = previousResult;
