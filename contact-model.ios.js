@@ -92,6 +92,17 @@ var Contact = (function (_super) {
             }
         } else { delete this.urlAddresses; }
     };
+
+    Contact.prototype.initializeFromObject = function (
+        cObject,
+        contactFields = ['name','organization','nickname','notes','photo','urls','phoneNumbers','emailAddresses','postalAddresses']
+    ) {
+        var mainCursorJson = cObject;
+        
+        for(let prop in cObject){
+            this[prop] = cObject[prop]
+        }
+    }
     
     Contact.prototype.save = function () {
         var isUpdate = false;

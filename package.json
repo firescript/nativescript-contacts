@@ -1,23 +1,36 @@
 {
-  "name": "nativescript-contacts",
-  "version": "1.5.3",
-  "description": "A NativeScript module providing easy access to iOS and android contact directory. Pick a contact, update date, or add a new one!",
-  "main": "index",
-  "typings": "nativescript-contacts.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/firescript/nativescript-contacts.git"
+  "_from": "nativescript-contacts",
+  "_id": "nativescript-contacts@1.5.3",
+  "_inBundle": false,
+  "_integrity": "sha1-8hCbHTLdyO3CRf1EwA/7y2ZDfdg=",
+  "_location": "/nativescript-contacts",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "nativescript-contacts",
+    "name": "nativescript-contacts",
+    "escapedName": "nativescript-contacts",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
   },
-  "keywords": [
-    "NativeScript",
-    "Contacts",
-    "Address Book",
-    "Contact Directory"
+  "_requiredBy": [
+    "#USER",
+    "/"
   ],
+  "_resolved": "https://registry.npmjs.org/nativescript-contacts/-/nativescript-contacts-1.5.3.tgz",
+  "_shasum": "f2109b1d32ddc8edc245fd44c00ffbcb66437dd8",
+  "_spec": "nativescript-contacts",
+  "_where": "/Users/shk/Documents/FaceSyncNew",
   "author": {
     "name": "Ryan  Lebel",
     "email": "ryan@firescript.ca"
   },
+  "bugs": {
+    "url": "https://github.com/firescript/nativescript-contacts/issues"
+  },
+  "bundleDependencies": false,
   "contributors": [
     {
       "name": "Steve McNiven-Scott",
@@ -37,16 +50,29 @@
       "url": "https://github.com/bthurlow"
     }
   ],
+  "deprecated": false,
+  "description": "A NativeScript module providing easy access to iOS and android contact directory. Pick a contact, update date, or add a new one!",
+  "devDependencies": {
+    "tns-core-modules": "1.6.0"
+  },
+  "homepage": "https://github.com/firescript/nativescript-contacts",
+  "keywords": [
+    "NativeScript",
+    "Contacts",
+    "Address Book",
+    "Contact Directory"
+  ],
   "license": {
     "type": "MIT",
     "url": "https://github.com/firescript/nativescript-contacts/blob/master/LICENSE"
   },
-  "bugs": {
-    "url": "https://github.com/firescript/nativescript-contacts/issues"
-  },
-  "homepage": "https://github.com/firescript/nativescript-contacts",
+  "main": "index",
+  "name": "nativescript-contacts",
   "nativescript": {},
-  "devDependencies": {
-      "tns-core-modules": "1.6.0"
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/firescript/nativescript-contacts.git"
+  },
+  "typings": "nativescript-contacts.d.ts",
+  "version": "1.5.3"
 }

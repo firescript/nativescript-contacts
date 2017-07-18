@@ -8,7 +8,7 @@ var RAW_CONTACT_ID = "raw_contact_id"; // android.provider.ContactsContract.Data
 var CONTACT_ID = "contact_id"; // android.provider.ContactsContract.Data.CONTACT_ID
 var MIMETYPE = "mimetype"; // android.provider.ContactsContract.Data.MIMETYPE
 
-/* 
+/*
    inside a web worker appModule.android.context does not work (function by Nathanael)
 */
 exports.getContext = () => {
@@ -28,42 +28,45 @@ exports.getContext = () => {
 exports.addImageSources = (message) => {
     try {
         message.data.forEach((contact) => {
-            if (contact.hasOwnProperty('photo') && contact.photo.hasOwnProperty('photo_uri')) {
+            if (contact.photo && contact.photo.photo_uri) {
                 var bitmap = android.provider.MediaStore.Images.Media.getBitmap(
                     appModule.android.foregroundActivity.getContentResolver(),
                     android.net.Uri.parse(contact.photo.photo_uri)
                 );
-                Object.assign(contact.photo, imageSource.fromNativeSource(bitmap));
+                const _photo = imageSource.fromNativeSource(bitmap)
+                for(let prop in _photo){
+                    contact.photo[prop] = _photo[prop]
+                }
            }
        });
-    } catch(e) { console.dump(e); }
+    } catch(e) { console.log(e); }
     return message;
 };
 
-//Query Sample: 
+//Query Sample:
 //query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 exports.getBasicCursor = function(uri, id){
-    var contentResolver = exports.getContext().getContentResolver(); 
-    var cursor = contentResolver.query(uri, 
-                                        null, 
+    var contentResolver = exports.getContext().getContentResolver();
+    var cursor = contentResolver.query(uri,
+                                        null,
                                         CONTACT_ID + "=" + id,
-                                        null, 
+                                        null,
                                         null);
     //cursor.moveToFirst();
-    
+
     return cursor;
 };
 
 //projection: String[]
 //parameters: String[]
 exports.getComplexCursor = function(id, uri, projection, parameters){
-    var contentResolver = exports.getContext().getContentResolver(); 
-    var cursor = contentResolver.query(uri, 
-                                    projection, 
+    var contentResolver = exports.getContext().getContentResolver();
+    var cursor = contentResolver.query(uri,
+                                    projection,
                                     CONTACT_ID + "=? AND " + MIMETYPE + "=?",
-                                    parameters, 
+                                    parameters,
                                     null);
-                         
+
     return cursor;
 };
 
@@ -71,7 +74,7 @@ exports.getComplexCursor = function(id, uri, projection, parameters){
 exports.getEmailType = function(data2, data3) {
     var typeInt = parseInt(data2, 10);
     var typeConverted = "";
-    
+
     switch(typeInt) {
         case TYPE_CUSTOM:
             typeConverted = data3; //LABEL
@@ -89,7 +92,7 @@ exports.getEmailType = function(data2, data3) {
             typeConverted = KnownLabel.MOBILE;
             break;
     }
-    
+
     return typeConverted;
 };
 
@@ -129,7 +132,7 @@ exports.getOrgType = function(data2, data3){
             typeConverted = KnownLabel.OTHER;
             break;
     }
-    
+
     return typeConverted;
 };
 
@@ -152,7 +155,7 @@ exports.getNativeOrgType = function (label) {
 exports.getWebsiteType = function(data2, data3){
     var typeInt = parseInt(data2, 10);
     var typeConverted = "";
-    
+
     switch(typeInt){
         case TYPE_CUSTOM:
             typeConverted = data3; //LABEL
@@ -179,7 +182,7 @@ exports.getWebsiteType = function(data2, data3){
             typeConverted = KnownLabel.OTHER;
             break;
     }
-    
+
     return typeConverted;
 };
 
@@ -217,7 +220,7 @@ exports.getNativeWebsiteType = function (label) {
 exports.getAddressType = function(data2, data3){
     var typeInt = parseInt(data2, 10);
     var typeConverted = "";
-    
+
     switch(typeInt){
         case TYPE_CUSTOM:
             typeConverted = data3; //LABEL
@@ -232,7 +235,7 @@ exports.getAddressType = function(data2, data3){
             typeConverted = KnownLabel.OTHER;
             break;
     }
-    
+
     return typeConverted;
 };
 
@@ -258,7 +261,7 @@ exports.getNativeAddressType = function (label) {
 exports.getPhoneType = function(data2, data3){
     var typeInt = parseInt(data2, 10);
     var typeConverted = "";
-    
+
     switch(typeInt){
         case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
             typeConverted = KnownLabel.HOME;
@@ -275,7 +278,7 @@ exports.getPhoneType = function(data2, data3){
         case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
             typeConverted = KnownLabel.FAX_HOME;
             break;
-        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_PAGER: 
+        case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
             typeConverted = KnownLabel.PAGER;
             break;
         case android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
@@ -324,7 +327,7 @@ exports.getPhoneType = function(data2, data3){
             typeConverted = KnownLabel.MMS;
             break;
     }
-    
+
     return typeConverted;
 };
 
@@ -393,7 +396,7 @@ exports.getNativePhoneType = function (label) {
             nativeType = android.provider.ContactsContract.CommonDataKinds.Phone.TYPE_MMS;
             break;
     }
-    
+
     return nativeType;
 };
 
