@@ -23,5 +23,8 @@ self.onmessage = function (event) {
       c.close();
       postMessage({ type: 'result', message: { data: null, response: "fetch" }})
     }
-  } catch (e) { postMessage({ type: 'result', message: e }); }
+  } catch (e) { 
+    console.log('error', e)
+    postMessage({ type: 'result', message: e }); 
+  }
 }
