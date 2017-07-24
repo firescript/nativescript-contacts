@@ -13,9 +13,13 @@ self.onmessage = function (event) {
     if(c.getCount() > 0){
       var cts = [];
       while(c.moveToNext()){
-        var contactModel = new Contact();
-        contactModel.initializeFromNative(c,event.data.contactFields);
-        cts.push(contactModel);
+        try {
+          var contactModel = new Contact();
+          contactModel.initializeFromNative(c,event.data.contactFields);
+          cts.push(contactModel);
+        } catch(e) {
+          console_log("Error processing contact");
+        }
       }
       c.close();
       postMessage({ type: 'result', message: { data: cts, response: "fetch" }});
