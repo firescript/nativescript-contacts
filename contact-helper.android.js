@@ -25,16 +25,16 @@ exports.getContext = function () {
 /*
    add nativescript image-source object to photo property - does not work from inside a web worker
 */
-exports.addImageSources = (message) => {
+exports.addImageSources = function (message) {
     try {
-        message.data.forEach((contact) => {
+        message.data.forEach(function (contact) {
             if (contact.photo && contact.photo.photo_uri) {
                 var bitmap = android.provider.MediaStore.Images.Media.getBitmap(
                     appModule.android.foregroundActivity.getContentResolver(),
                     android.net.Uri.parse(contact.photo.photo_uri)
                 );
-                const _photo = imageSource.fromNativeSource(bitmap)
-                for(let prop in _photo){
+                var _photo = imageSource.fromNativeSource(bitmap);
+                for(var prop in _photo){
                     contact.photo[prop] = _photo[prop]
                 }
            }
