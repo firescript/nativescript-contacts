@@ -71,9 +71,9 @@ exports.getAllContacts = function(contactFields) {
         var worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
         worker.postMessage({ "contactFields" : contactFields });
         worker.onmessage = function (event) {
-            let _contacts = []
+            var _contacts = []
             try{
-                (event.data.message.data || []).forEach((contact) => {
+                (event.data.message.data || []).forEach(function (contact) {
                     var contactModel = new Contact();
                     contactModel.initializeFromObject(contact,event.data.contactFields);
                     _contacts.push(contactModel)
