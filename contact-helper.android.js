@@ -11,7 +11,7 @@ var MIMETYPE = "mimetype"; // android.provider.ContactsContract.Data.MIMETYPE
 /*
    inside a web worker appModule.android.context does not work (function by Nathanael)
 */
-exports.getContext = () => {
+exports.getContext = function () {
     if (appModule.android.context) {
         return (appModule.android.context);
     }
