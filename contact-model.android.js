@@ -25,8 +25,10 @@ var Contact = (function (_super) {
 
     Contact.prototype.initializeFromNative = function (
         cursor,
-        contactFields = ['name', 'organization', 'nickname', 'notes', 'photo', 'urls', 'phoneNumbers', 'emailAddresses', 'postalAddresses']
+        contactFields
     ) {
+        contactFields = contactFields || ['name', 'organization', 'nickname', 'notes', 'photo', 'urls', 'phoneNumbers', 'emailAddresses', 'postalAddresses'];
+        
         var mainCursorJson = helper.convertNativeCursorToJson(cursor);
         this.id = mainCursorJson["_id"];
 
@@ -232,11 +234,13 @@ var Contact = (function (_super) {
 
     Contact.prototype.initializeFromObject = function (
         cObject,
-        contactFields = ['name', 'organization', 'nickname', 'notes', 'photo', 'urls', 'phoneNumbers', 'emailAddresses', 'postalAddresses']
+        contactFields
     ) {
+        contactFields = contactFields || ['name', 'organization', 'nickname', 'notes', 'photo', 'urls', 'phoneNumbers', 'emailAddresses', 'postalAddresses'];
+
         var mainCursorJson = cObject;
 
-        for (let prop in cObject) {
+        for (var prop in cObject) {
             this[prop] = cObject[prop]
         }
     }
