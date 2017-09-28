@@ -69,11 +69,11 @@ exports.getContact = function() {
     });
 };
 
-exports.getContactsByName = (searchPredicate,contactFields) => {
-    return new Promise((resolve, reject) => {
-        let worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
+exports.getContactsByName = function (searchPredicate,contactFields) {
+    return new Promise(function (resolve, reject) {
+        var worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
         worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
-        worker.onmessage = ((event) => {
+        worker.onmessage = (function (event) {
             if (event.data.type == 'debug') { console.log(event.data.message); }
             else if (event.data.type == 'dump') { console.dump(event.data.message); }
             else if (event.data.type == 'result') {
@@ -83,26 +83,26 @@ exports.getContactsByName = (searchPredicate,contactFields) => {
                 else { resolve(event.data.message); }
             }
         });
-        worker.onerror = ((e) => {
+        worker.onerror = (function (e) {
             console.dump(e);
         });
     });
 };
 
-exports.getAllContacts = (contactFields) => {
-    return new Promise((resolve, reject) => {
-        let worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
+exports.getAllContacts = function (contactFields) {
+    return new Promise(function (resolve, reject) {
+        var worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
         worker.postMessage({ "contactFields" : contactFields });
-        worker.onmessage = ((event) => {
+        worker.onmessage = (function (event) {
             if (event.data.type == 'debug') { console.log(event.data.message); }
             else if (event.data.type == 'dump') { console.dump(event.data.message); }
             else if (event.data.type == 'result') {
                 worker.terminate();
                 
                 // init worker serialized contacts with Contact model
-                let _contacts = []
+                var _contacts = []
                 try{
-                    (event.data.message.data || []).forEach((contact) => {
+                    (event.data.message.data || []).forEach(function (contact) {
                         var contactModel = new Contact();
                         contactModel.initializeFromObject(contact,event.data.contactFields);
                         _contacts.push(contactModel)
@@ -117,16 +117,16 @@ exports.getAllContacts = (contactFields) => {
                 else { resolve(event.data.message); }
             }
         });
-        worker.onerror = ((e) => {
+        worker.onerror = (function (e) {
             console.dump(e);
         });
     });
 };
 
 
-exports.getAllContactsWithoutWorker = (contactFields) => {
-    return new Promise((resolve, reject) => {
-        const result = getAllContacts(contactFields)
+exports.getAllContactsWithoutWorker = function (contactFields) {
+    return new Promise(function (resolve, reject) {
+        var result = getAllContacts(contactFields)
         if (contactFields.indexOf('photo') > -1) { resolve(helper.addImageSources(result)); }
         else { resolve(result); }
     });
