@@ -28,7 +28,7 @@ self.onmessage = function (event) {
       postMessage({ type: 'result', message: { data: null, response: "fetch" }})
     }
   } catch (e) { 
-    console.log('error', e)
+    // console.log('error', e)
     postMessage({ type: 'result', message: e }); 
   }
 }

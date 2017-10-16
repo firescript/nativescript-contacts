@@ -39,7 +39,9 @@ exports.addImageSources = function (message) {
                 }
            }
        });
-    } catch(e) { console.log(e); }
+    } catch(e) { 
+        // console.log(e); 
+    }
     return message;
 };
 

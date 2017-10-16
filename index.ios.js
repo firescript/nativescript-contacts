@@ -61,8 +61,12 @@ exports.getContactsByName = function(searchPredicate,contactFields){
         }
         worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
         worker.onmessage = function (event) {
-            if (event.data.type == 'debug') { console.log(event.data.message); }
-            else if (event.data.type == 'dump') { console.dump(event.data.message); }
+            if (event.data.type == 'debug') { 
+                // console.log(event.data.message); 
+            }
+            else if (event.data.type == 'dump') { 
+                // console.dump(event.data.message); 
+            }
             else if (event.data.type == 'error') { reject(event.data.message); }
             else {
                 worker.terminate();
@@ -70,7 +74,7 @@ exports.getContactsByName = function(searchPredicate,contactFields){
             }
         };
         worker.onerror = function (e) {
-            console.dump(e);
+            // console.dump(e);
         };
     });
 };
@@ -87,11 +91,15 @@ exports.getAllContacts = function(contactFields) {
                     _contacts.push(contactModel)
                 })
             } catch(e){
-                console.dump(e)
+                // console.dump(e)
             }
             event.data.message.data = _contacts
-            if (event.data.type == 'debug') { console.log(event.data.message); }
-            else if (event.data.type == 'dump') { console.dump(event.data.message); }
+            if (event.data.type == 'debug') { 
+                // console.log(event.data.message);
+             }
+            else if (event.data.type == 'dump') { 
+                // console.dump(event.data.message); 
+            }
             else if (event.data.type == 'error') { reject(event.data.message); }
             else {
                 worker.terminate();
@@ -99,7 +107,7 @@ exports.getAllContacts = function(contactFields) {
             }
         };
         worker.onerror = function (e) {
-            console.dump(e);
+            // console.dump(e);
         };
     });
 };

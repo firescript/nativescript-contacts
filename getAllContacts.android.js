@@ -49,7 +49,7 @@ module.exports = function (contactFields) {
             }
         }
     } catch (e) {
-        console.log('error', e)
+        // console.log('error', e)
         return {
             data: null,
             response: "fetch"

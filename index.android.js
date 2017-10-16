@@ -82,8 +82,12 @@ exports.getContactsByName = function (searchPredicate,contactFields) {
         }
         worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
         worker.onmessage = (function (event) {
-            if (event.data.type == 'debug') { console.log(event.data.message); }
-            else if (event.data.type == 'dump') { console.dump(event.data.message); }
+            if (event.data.type == 'debug') { 
+                // console.log(event.data.message); 
+            }
+            else if (event.data.type == 'dump') { 
+                // console.dump(event.data.message); 
+            }
             else if (event.data.type == 'result') {
                 worker.terminate();
                 // add nativescript image-source object to photo property since it does not work inside web worker
@@ -92,7 +96,7 @@ exports.getContactsByName = function (searchPredicate,contactFields) {
             }
         });
         worker.onerror = (function (e) {
-            console.dump(e);
+            // console.dump(e);
         });
     });
 };
@@ -102,8 +106,12 @@ exports.getAllContacts = function (contactFields) {
         var worker = new Worker('./get-all-contacts-worker.js'); // relative for caller script path
         worker.postMessage({ "contactFields" : contactFields });
         worker.onmessage = (function (event) {
-            if (event.data.type == 'debug') { console.log(event.data.message); }
-            else if (event.data.type == 'dump') { console.dump(event.data.message); }
+            if (event.data.type == 'debug') { 
+                // console.log(event.data.message); 
+            }
+            else if (event.data.type == 'dump') { 
+                // console.dump(event.data.message); 
+            }
             else if (event.data.type == 'result') {
                 worker.terminate();
                 
@@ -116,7 +124,7 @@ exports.getAllContacts = function (contactFields) {
                         _contacts.push(contactModel)
                     })
                 } catch(e){
-                    console.dump(e)
+                    // console.dump(e)
                 }
                 event.data.message.data = _contacts
 
@@ -126,7 +134,7 @@ exports.getAllContacts = function (contactFields) {
             }
         });
         worker.onerror = (function (e) {
-            console.dump(e);
+            // console.dump(e);
         });
     });
 };
