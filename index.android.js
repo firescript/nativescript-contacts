@@ -71,7 +71,15 @@ exports.getContact = function() {
 
 exports.getContactsByName = function (searchPredicate,contactFields) {
     return new Promise(function (resolve, reject) {
-        var worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
+        var worker;
+        // Check if webpack is used, in which case, load using webpack loader, otherwise load using relative path
+        // Using webpack assumes that the nativescript worker loader is properly configured. See https://github.com/NativeScript/worker-loader
+        if (global["TNS_WEBPACK"]) {
+          var myWorker = require('nativescript-worker-loader!./get-contacts-by-name-worker.js');
+          worker = new myWorker();
+        } else {
+          worker = new Worker('./get-contacts-by-name-worker.js'); // relative for caller script path
+        }
         worker.postMessage({ "searchPredicate": searchPredicate, "contactFields" : contactFields });
         worker.onmessage = (function (event) {
             if (event.data.type == 'debug') { console.log(event.data.message); }
