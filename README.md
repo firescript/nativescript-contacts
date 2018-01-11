@@ -15,6 +15,25 @@ To use the contacts module you must first `require()` it.
 var contacts = require( "nativescript-contacts" );
 ```
 
+## Android Caveats
+
+From API level 23 on you need to check for the appropriate permissions to access the contacts. So not only do you need these permissions in your manifest:
+
+```
+<uses-permission android:name="android.permission.GET_ACCOUNTS" />        
+<uses-permission android:name="android.permission.READ_CONTACTS" />
+<uses-permission android:name="android.permission.WRITE_CONTACTS" />
+```
+You also need to make sure to request the permissions everytime you perform the operation itself (e.g. using the great nativescript-permissions plugin):
+```
+const contact = new Contact();
+(...)
+Permissions.requestPermissions([android.Manifest.permission.GET_ACCOUNTS, android.Manifest.permission.WRITE_CONTACTS], "I need these permissions because I'm cool")
+            .then(() => {
+                contact.save();
+            });
+```
+
 ### Methods
 
 ####getContact: Pick one contact and bring back its data.
