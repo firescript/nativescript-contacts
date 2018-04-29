@@ -107,9 +107,9 @@ declare module "nativescript-contacts" {
     }
 
     export function getContact(): Promise<GetContactResult>;
-    export function getContactsByName(): Promise<GetFetchResult>;
-    export function getAllContacts(): Promise<GetFetchResult>;
-    export function getContactsInGroup(): Promise<GetFetchResult>;
+    export function getContactsByName(searchPredicate: string, contactFields: string[]): Promise<GetFetchResult>;
+    export function getAllContacts(contactFields: string[]): Promise<GetFetchResult>;
+    export function getContactsInGroup(groupId: string): Promise<GetFetchResult>;
 
     export class Group {
         id: string;
