@@ -1,6 +1,7 @@
 var helper = require("./contact-helper");
 var appModule = require("application");
 var ContactCommon = require("./contact-model-common");
+var imageSource = require('image-source');
 
 /* missing constants from the {N} */
 var ACCOUNT_TYPE = "account_type"; // android.provider.ContactsContract.RawContacts.ACCOUNT_TYPE
@@ -9,6 +10,28 @@ var TYPE = "data2"; // android.provider.ContactsContract.CommonDataKinds.Phone.T
 var LABEL = "data3";
 var PHOTO_URI = "photo_uri"; // android.provider.ContactsContract.CommonDataKinds.Phone.PHOTO_URI
 var IS_SUPER_PRIMARY = "is_super_primary"; // android.provider.ContactsContract.Data.IS_SUPER_PRIMARY
+
+var getAndroidContext = () => {
+    if (
+      typeof appModule != 'undefined' &&
+      appModule.hasOwnProperty('android') &&
+      appModule.android.hasOwnProperty('context')
+    ) {
+      return appModule.android.context;
+    }
+  
+    var ctx = java.lang.Class.forName('android.app.AppGlobals')
+      .getMethod('getInitialApplication', null)
+      .invoke(null, null);
+    if (ctx) {
+      return ctx;
+    }
+  
+    ctx = java.lang.Class.forName('android.app.ActivityThread')
+      .getMethod('currentApplication', null)
+      .invoke(null, null);
+    return ctx;
+  };
 
 var Contact = (function (_super) {
     global.__extends(Contact, _super);
@@ -33,20 +56,12 @@ var Contact = (function (_super) {
         this.id = mainCursorJson["_id"];
 
         if (contactFields.indexOf('photo') > -1 && mainCursorJson[PHOTO_URI]) {
-            /*
-                appModule.android.foregroundActivity is not available inside web worker
-                handling this from outside the worker in index.android.js
-                instead just adding PHOTO_URI to photo object
-             */
-            // Get photo
-            // var bitmap = android.provider.MediaStore.Images.Media.getBitmap(
-            //     appModule.android.foregroundActivity.getContentResolver(),
-            //     android.net.Uri.parse(mainCursorJson[PHOTO_URI])
-            // );
-            // this.photo = imageSource.fromNativeSource(bitmap);
-            this.photo = {
-                'photo_uri': mainCursorJson[PHOTO_URI]
-            };
+            var bitmap = android.provider.MediaStore.Images.Media.getBitmap(
+                getAndroidContext().getContentResolver(),
+                android.net.Uri.parse(mainCursorJson[PHOTO_URI])
+              );
+              // this.photo = imageSource.fromNativeSource(bitmap);
+              this.photo = 'data:image/png;base64,' + imageSource.fromNativeSource(bitmap).toBase64String('png');
         } else {
             delete this.photo;
         }
