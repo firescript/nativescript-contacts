@@ -34,7 +34,7 @@ var Contact = (function (_super) {
         this.notes = helper.getiOSValue("notes", contactData);
         
         if (contactFields.indexOf('photo') > -1 && contactData.imageDataAvailable) {
-            this.photo = imageSource.fromData(contactData.imageData);
+            this.photo = imageSource.fromData(contactData.imageData).toBase64String('png');
         } else { delete this.photo; }
         
         if(contactFields.indexOf('phoneNumbers') > -1 && contactData.phoneNumbers.count > 0) {
