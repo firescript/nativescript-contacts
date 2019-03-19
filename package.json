@@ -1,5 +1,5 @@
 {
-  "name": "@nickykln/nativescript-contacts",
+  "name": "nativescript-contacts",
   "version": "1.5.6",
   "description": "A NativeScript module providing easy access to iOS and android contact directory. Pick a contact, update date, or add a new one!",
   "main": "index",
