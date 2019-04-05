@@ -255,7 +255,7 @@ var Contact = (function (_super) {
         var contentResolver = appModule.android.foregroundActivity.getContentResolver();
         var ops = new java.util.ArrayList();
 
-        if (accounts.length != 0) { 
+        if (accounts.length !== 0) { 
             accountName = accounts[0].name;
             accountType = accounts[0].type;
         }
