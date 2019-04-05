@@ -255,12 +255,10 @@ var Contact = (function (_super) {
         var contentResolver = appModule.android.foregroundActivity.getContentResolver();
         var ops = new java.util.ArrayList();
 
-        if (accounts.length === 0) {
-            throw new Error("No Accounts!");
+        if (accounts.length !== 0) { 
+            accountName = accounts[0].name;
+            accountType = accounts[0].type;
         }
-
-        accountName = accounts[0].name;
-        accountType = accounts[0].type;
 
         if (id && id !== "") {
             var rawIdCursor = contentResolver.query(android.provider.ContactsContract.RawContacts.CONTENT_URI, ["_id"],
