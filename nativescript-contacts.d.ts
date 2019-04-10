@@ -65,6 +65,7 @@ declare module "nativescript-contacts" {
         urls: ContactField[];
 
         public save();
+        public delete();
     }
 
     export var KnownLabel: {
