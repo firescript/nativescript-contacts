@@ -65,6 +65,7 @@ declare module "nativescript-contacts" {
         urls: ContactField[];
 
         public save();
+        public delete();
     }
 
     export var KnownLabel: {
@@ -114,6 +115,9 @@ declare module "nativescript-contacts" {
     export class Group {
         id: string;
         name: string;
+        
+        public save(useDefaultContainer: boolean);
+        public addMember(contact: Contact);
     }
 
     export interface GetGroupResult {
@@ -121,5 +125,5 @@ declare module "nativescript-contacts" {
         response: string; // "fetch"
     }
         
-    export function getGroups(): Promise<GetGroupResult>;
+    export function getGroups(name?: string): Promise<GetGroupResult>;
 }
