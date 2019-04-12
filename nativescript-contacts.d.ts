@@ -1,5 +1,5 @@
 declare module "nativescript-contacts" {
-    import imageSource = require("image-source");
+    import imageSource = require("tns-core-modules/image-source");
     
     export interface ContactField {
         id?: string;
