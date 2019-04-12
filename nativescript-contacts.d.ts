@@ -115,6 +115,9 @@ declare module "nativescript-contacts" {
     export class Group {
         id: string;
         name: string;
+        
+        public save(useDefaultContainer: boolean);
+		public addMember(contact: Contact);
     }
 
     export interface GetGroupResult {
