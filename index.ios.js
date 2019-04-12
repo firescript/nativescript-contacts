@@ -210,7 +210,7 @@ exports.getContactsInGroup = function(g) {
       reject(error.localizedDescription);
     }
 
-    if (foundContacts.count > 0) {
+    if (foundContacts && foundContacts.count > 0) {
       var cts = [];
       for (var i = 0; i < foundContacts.count; i++) {
         var contactModel = new Contact();
