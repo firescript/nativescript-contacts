@@ -125,5 +125,5 @@ declare module "nativescript-contacts" {
         response: string; // "fetch"
     }
         
-    export function getGroups(): Promise<GetGroupResult>;
+    export function getGroups(name?: string): Promise<GetGroupResult>;
 }
