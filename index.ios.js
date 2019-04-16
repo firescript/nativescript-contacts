@@ -134,7 +134,7 @@ exports.getGroups = function(name) {
       reject(error.localizedDescription);
     }
 
-    if (foundGroups.count > 0) {
+    if (foundGroups && foundGroups.count > 0) {
       var groups = [],
         i = 0,
         groupModel = null;
