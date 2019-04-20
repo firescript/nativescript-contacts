@@ -19,7 +19,7 @@ self.onmessage = function (event) {
 
   if (contactFields.indexOf('organization') > -1) { keysToFetch.push("jobTitle", "departmentName", "organizationName"); }
   if (contactFields.indexOf('nickname') > -1) { keysToFetch.push("nickname"); }
-  if (contactFields.indexOf('notes') > -1) { keysToFetch.push("notes"); }
+  if (contactFields.indexOf('notes') > -1) { keysToFetch.push("note"); }
   if (contactFields.indexOf('photo') > -1) { keysToFetch.push("imageData", "imageDataAvailable"); }
   if (contactFields.indexOf('phoneNumbers') > -1) { keysToFetch.push("phoneNumbers"); }
   if (contactFields.indexOf('emailAddresses') > -1) { keysToFetch.push("emailAddresses"); }
