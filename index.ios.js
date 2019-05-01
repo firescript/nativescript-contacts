@@ -192,7 +192,7 @@ exports.getContactsInGroup = function(g) {
         "jobTitle",
         "departmentName",
         "organizationName",
-        "notes",
+        "note",
         "phoneNumbers",
         "emailAddresses",
         "postalAddresses",

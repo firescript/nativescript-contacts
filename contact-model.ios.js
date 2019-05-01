@@ -125,7 +125,7 @@ var Contact = (function (_super) {
                 "jobTitle", 
                 "departmentName", 
                 "organizationName", 
-                "notes", 
+                "note", 
                 "phoneNumbers", 
                 "emailAddresses", 
                 "postalAddresses", 
@@ -179,8 +179,8 @@ var Contact = (function (_super) {
             return CNLabeledValue.labeledValueWithLabelValue(helper.getNativeGenericLabel(item.label), mutableAddress)
         });
         
-        // Set Notes
-        contactRecord.notes = this.notes;
+        // Set Note
+        contactRecord.note = this.notes;
                 
         // Set Websites
         contactRecord.urlAddresses = this.urls.map(function (item) {
@@ -241,7 +241,7 @@ var Contact = (function (_super) {
                 "jobTitle", 
                 "departmentName", 
                 "organizationName", 
-                "notes", 
+                "note", 
                 "phoneNumbers", 
                 "emailAddresses", 
                 "postalAddresses", 

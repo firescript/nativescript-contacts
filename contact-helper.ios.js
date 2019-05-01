@@ -6,6 +6,9 @@ var WORK_FAX = "_$!<WorkFAX>!$_";
 var MAIN = "_$!<Main>!$_";
 
 exports.getiOSValue = function(key, contactData){
+    if (key === 'notes') {
+        key = 'note';
+    }
     return contactData.isKeyAvailable(key) ? contactData[key] : "";
 };
 
