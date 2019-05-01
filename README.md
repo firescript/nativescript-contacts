@@ -209,6 +209,27 @@ contacts.getAllContacts(contactFields).then(
 );
 ```
 
+#### getContactById: Finds the contact with the matching identifier. Returns GetFetchResult. *(iOS Only)*
+```js
+var app = require("application");
+var contacts = require("nativescript-contacts");
+
+var contactId = '[Contact Identifier]'; // Assumes this is a valid contact identifier (Contact.id)
+
+contacts.getContactById(contactId).then(
+  function(args) {
+    console.log("getContactById Complete");
+    console.log(JSON.stringify(args));
+    /// Returns args:
+    /// args.data: Generic cross platform JSON object, null if no contacts were found.
+    /// args.reponse: "fetch"
+  },
+  function(err) {
+    console.log("Error: " + err);
+  }
+);
+```
+
 #### getGroups: Find groups. Returns an array of group data.
 
 ```js
@@ -517,6 +538,17 @@ Those are the system labels but you can also use any custom label you want.
 {
   id: "";
   name: "";
+}
+```
+
+### `GetFetchResult` Data Structure
+
+The object returned by contact fetch requests.
+
+```js
+{
+  data: Contact[];
+  response: string;
 }
 ```
 

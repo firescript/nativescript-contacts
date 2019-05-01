@@ -53,6 +53,59 @@ exports.getContact = function() {
     page.presentModalViewControllerAnimated(controller, true);
   });
 };
+
+exports.getContactById = function(id) {
+  return new Promise(function(resolve, reject) {
+    if (!id) {
+      reject('Missing Contact Identifier');
+    }
+    const store = new CNContactStore();
+    const searchPredicate = CNContact.predicateForContactsWithIdentifiers([id]);
+    const keysToFetch = [
+        "givenName", 
+        "familyName", 
+        "middleName", 
+        "namePrefix", 
+        "nameSuffix", 
+        "phoneticGivenName", 
+        "phoneticMiddleName", 
+        "phoneticFamilyName", 
+        "nickname", 
+        "jobTitle", 
+        "departmentName", 
+        "organizationName", 
+        "note", 
+        "phoneNumbers", 
+        "emailAddresses", 
+        "postalAddresses", 
+        "urlAddresses", 
+        "imageData",
+        "imageDataAvailable"
+    ]; // All Properties that we are using in the Model
+    let error;
+    const foundContacts = store.unifiedContactsMatchingPredicateKeysToFetchError(searchPredicate, keysToFetch, error);
+  
+    if (error) {
+      reject(error.localizedDescription);
+    }
+
+    if (foundContacts && foundContacts.count > 0) {
+      let contactModel = new Contact();
+      contactModel.initializeFromNative(foundContacts[0]);
+      
+      resolve({
+        data: [contactModel],
+        response: "fetch"
+      });
+    } else {
+      resolve({
+        data: null,
+        response: "fetch"
+      });
+    }
+  });
+}
+
 exports.getContactsByName = function(searchPredicate, contactFields) {
   return new Promise(function(resolve, reject) {
     var worker;
