@@ -37,10 +37,7 @@
       "url": "https://github.com/bthurlow"
     }
   ],
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/firescript/nativescript-contacts/blob/master/LICENSE"
-  },
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/firescript/nativescript-contacts/issues"
   },
