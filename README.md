@@ -190,8 +190,10 @@ var app = require("application");
 var contacts = require("nativescript-contacts");
 
 /*
-  contactFields contains the fields to retrieve from native backend to reduce processing time
+  Optional: contactFields contains the fields to retrieve from native backend to reduce processing time
   var contactFields = ['name','organization','nickname','notes','photo','urls','phoneNumbers','emailAddresses','postalAddresses']
+
+  If not supplied, all available contactFields will be returned.
 */
 var contactFields = ["name", "phoneNumbers"];
 

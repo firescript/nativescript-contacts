@@ -7,7 +7,17 @@ function console_log(msg) { postMessage({ type: 'debug', message: msg }); }
 function console_dump(msg) { postMessage({ type: 'dump', message: msg }); }
 
 self.onmessage = function (event) {
-  contactFields = event.data.contactFields;
+  contactFields = event.data.contactFields || [
+		'name',
+		'organization',
+		'nickname',
+		'notes',
+		'photo',
+		'urls',
+		'phoneNumbers',
+		'emailAddresses',
+		'postalAddresses',
+	];
   
   var keysToFetch = [];  // All Properties that we are using in the Model
   if (contactFields.indexOf('name') > -1) { 
