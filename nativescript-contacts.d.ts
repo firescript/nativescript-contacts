@@ -66,6 +66,9 @@ declare module "nativescript-contacts" {
 
         public save();
         public delete();
+
+        // iOS Specific
+        public isUnified(): boolean; 
     }
 
     export var KnownLabel: {
