@@ -157,17 +157,17 @@ var Contact = (function (_super) {
         contactRecord.nickname = this.nickname;
         
         // Set Phones
-        contactRecord.phoneNumbers = this.phoneNumbers.map(function (item) {
+        contactRecord.phoneNumbers = this.phoneNumbers ? this.phoneNumbers.map(function (item) {
             return CNLabeledValue.labeledValueWithLabelValue(helper.getNativePhoneLabel(item.label), CNPhoneNumber.phoneNumberWithStringValue(item.value))    
-        });
+        }) : [];
         
         // Set Emails
-        contactRecord.emailAddresses = this.emailAddresses.map(function (item) {
+        contactRecord.emailAddresses = this.emailAddresses ? this.emailAddresses.map(function (item) {
             return CNLabeledValue.labeledValueWithLabelValue(helper.getNativeGenericLabel(item.label), item.value)
-        });
+        }) : [];
         
         // Set Addresses
-        contactRecord.postalAddresses = this.postalAddresses.map(function (item) {
+        contactRecord.postalAddresses = this.postalAddresses ? this.postalAddresses.map(function (item) {
             var mutableAddress = new CNMutablePostalAddress();
             mutableAddress.street = item.location.street;
             mutableAddress.city = item.location.city;
@@ -177,15 +177,15 @@ var Contact = (function (_super) {
             mutableAddress.ISOCountryCode = item.location.countryCode;
             
             return CNLabeledValue.labeledValueWithLabelValue(helper.getNativeGenericLabel(item.label), mutableAddress)
-        });
+        }) : [];
         
         // Set Note
         contactRecord.note = this.notes;
                 
         // Set Websites
-        contactRecord.urlAddresses = this.urls.map(function (item) {
+        contactRecord.urlAddresses = this.urls ? this.urls.map(function (item) {
             return CNLabeledValue.labeledValueWithLabelValue(helper.getNativeWebsiteLabel(item.label), item.value)
-        });
+        }) : [];
         
         // Set Organization
         contactRecord.jobTitle = this.organization.jobTitle;
