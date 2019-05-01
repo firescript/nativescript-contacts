@@ -266,7 +266,42 @@ var Contact = (function (_super) {
             }
         }
     };
-    
+
+    Contact.prototype.isUnified = function() {
+        const store = new CNContactStore();
+        let contactRecord;
+        
+        if (this.id && this.id !== "") {
+            const searchPredicate = CNContact.predicateForContactsWithIdentifiers([this.id]);
+            const keysToFetch = [
+                "givenName", 
+                "familyName", 
+                "middleName", 
+                "namePrefix", 
+                "nameSuffix", 
+                "phoneticGivenName", 
+                "phoneticMiddleName", 
+                "phoneticFamilyName", 
+                "nickname", 
+                "jobTitle", 
+                "departmentName", 
+                "organizationName", 
+                "note", 
+                "phoneNumbers", 
+                "emailAddresses", 
+                "postalAddresses", 
+                "urlAddresses", 
+                "imageData",
+                "imageDataAvailable"
+            ]; // All Properties that we are using in the Model
+            const foundContacts = store.unifiedContactsMatchingPredicateKeysToFetchError(searchPredicate, keysToFetch, null);
+            if (foundContacts.count > 0) {
+                contactRecord = foundContacts[0];
+            }
+        }
+        return contactRecord ? contactRecord.isUnifiedWithContactWithIdentifier(this.id) : false;
+    }
+
     return Contact;
 })(ContactCommon)
 

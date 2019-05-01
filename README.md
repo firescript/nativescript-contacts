@@ -139,6 +139,24 @@ contacts.getContact().then(function(args) {
 });
 ```
 
+#### Check if contact is Unified/Linked (iOS Specific)
+
+```js
+var app = require("application");
+var contacts = require("nativescript-contacts");
+
+contacts.getContact().then(function(args) {
+  /// Returns args:
+  /// args.data: Generic cross platform JSON object
+  /// args.reponse: "selected" or "cancelled" depending on wheter the user selected a contact.
+
+  if (args.response === "selected") {
+    var contact = args.data; //See data structure below
+    console.log(contact.isUnified() ? 'Contact IS unified' : 'Contact is NOT unified');
+  }
+});
+```
+
 #### getContactsByName: Find all contacts whose name matches. Returns an array of contact data.
 
 ```js
