@@ -1,6 +1,6 @@
 {
   "name": "nativescript-contacts",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "A NativeScript module providing easy access to iOS and android contact directory. Pick a contact, update date, or add a new one!",
   "main": "index",
   "typings": "nativescript-contacts.d.ts",
@@ -37,16 +37,14 @@
       "url": "https://github.com/bthurlow"
     }
   ],
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/firescript/nativescript-contacts/blob/master/LICENSE"
-  },
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/firescript/nativescript-contacts/issues"
   },
   "homepage": "https://github.com/firescript/nativescript-contacts",
   "nativescript": {},
   "devDependencies": {
+    "nativescript-dev-webpack": "^0.21.2",
     "tns-core-modules": "5.2.0"
   }
 }
