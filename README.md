@@ -49,7 +49,7 @@ Permissions.requestPermissions([android.Manifest.permission.GET_ACCOUNTS, androi
 
 ### Methods
 
-####getContact: Pick one contact and bring back its data.
+#### getContact: Pick one contact and bring back its data.
 
 ```js
 var app = require("application");
