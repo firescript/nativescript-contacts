@@ -286,7 +286,7 @@ var Contact = (function (_super) {
                     return;
                 }
             }else {
-                throw new Error("No account not found on device");
+                throw new Error("No account found on device");
                 return;
             }
         }else {
