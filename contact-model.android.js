@@ -270,9 +270,30 @@ var Contact = (function (_super) {
         var contentResolver = appModule.android.foregroundActivity.getContentResolver();
         var ops = new java.util.ArrayList();
 
-        if (accounts.length !== 0) { 
-            accountName = accounts[0].name;
-            accountType = accounts[0].type;
+        if (this.account.length!=0){
+            if (accounts.length !== 0){
+                var accountFound = false;
+                for(var i=0; i<=accounts.length-1;i++){
+                    if(accounts[i].name===account){
+                        accountName =accounts[i].name;
+                        accountType = accounts[i].type;
+                        accountFound=true;
+                        break;
+                    }
+                }
+                if(!accountFound){
+                    throw new Error("Account "+ account + " not found on device");
+                    return;
+                }
+            }else {
+                throw new Error("No account not found on device");
+                return;
+            }
+        }else {
+            if (accounts.length !== 0) {
+                accountName = accounts[0].name;
+                accountType = accounts[0].type;
+            }
         }
 
         if (id && id !== "") {

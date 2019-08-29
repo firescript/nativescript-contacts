@@ -53,11 +53,12 @@ declare module "nativescript-contacts" {
 
     export class Contact {
         id: string;
+        account: string;
         name: ContactName;
         nickname: string;
         organization: Organization;
         notes: string;
-        photo: imageSource.ImageSource
+        photo: imageSource.ImageSource;
 
         phoneNumbers: ContactField[];
         emailAddresses: ContactField[];

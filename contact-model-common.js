@@ -3,6 +3,7 @@ var helper = require("./contact-helper");
 var Contact = (function () {
     function Contact() {
         this.id = "";
+		this.account="";
         this.name = {
             given: "",
             middle: "",
