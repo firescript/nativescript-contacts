@@ -274,7 +274,7 @@ var Contact = (function (_super) {
             if (accounts.length !== 0){
                 var accountFound = false;
                 for(var i=0; i<=accounts.length-1;i++){
-                    if(accounts[i].name===account){
+                    if(accounts[i].name===this.account){
                         accountName =accounts[i].name;
                         accountType = accounts[i].type;
                         accountFound=true;
