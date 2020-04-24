@@ -1,4 +1,4 @@
-var frameModule = require("ui/frame");
+const Frame = require("tns-core-modules/ui/frame").Frame;
 var Contact = require("./contact-model");
 var KnownLabel = require("./known-label");
 var Group = require("./group-model");
@@ -19,18 +19,26 @@ var CustomCNContactPickerViewControllerDelegate = NSObject.extend(
         response: "cancelled"
       });
     },
-    contactPickerDidSelectContact: function(controller, contact) {
-      controller.dismissModalViewControllerAnimated(true);
+    contactPickerDidSelectContact: function (controller, contact) {
 
-      //Convert the native contact object
-      var contactModel = new Contact();
-      contactModel.initializeFromNative(contact);
+      var self = this;
 
-      this.resolve({
-        data: contactModel,
-        response: "selected"
-      });
-      CFRelease(controller.delegate);
+      // Complete processing after view controller dismissed 
+      var completionHandler = function () {
+
+        //Convert the native contact object
+        var contactModel = new Contact();
+        contactModel.initializeFromNative(contact);
+
+        self.resolve({
+          data: contactModel,
+          response: "selected"
+        });
+        CFRelease(controller.delegate);
+      }
+ 
+      var page = Frame.topmost().ios.controller;
+      page.dismissViewControllerAnimatedCompletion(true, completionHandler);  
     }
   },
   {
@@ -49,8 +57,8 @@ exports.getContact = function() {
     CFRetain(delegate);
     controller.delegate = delegate;
 
-    var page = frameModule.topmost().ios.controller;
-    page.presentModalViewControllerAnimated(controller, true);
+    var page = Frame.topmost().ios.controller;
+    page.presentViewControllerAnimatedCompletion(controller, true, null);
   });
 };
 
