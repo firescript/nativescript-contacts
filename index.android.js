@@ -19,7 +19,7 @@ exports.getContact = function() {
 
       var previousResult = appModule.android.onActivityResult;
 
-      appModule.android.on("activityResult", function(eventData) {
+      var handleActivityResult = function (eventData) {
         var requestCode = eventData.requestCode;
         var resultCode = eventData.resultCode;
         var data = eventData.intent;
@@ -27,6 +27,7 @@ exports.getContact = function() {
         switch (requestCode) {
           case PICK_CONTACT:
             appModule.android.onActivityResult = previousResult;
+            appModule.android.off("activityResult", handleActivityResult);
 
             if (resultCode === android.app.Activity.RESULT_OK && data != null) {
               var contentResolver = helper.getContext().getContentResolver();
@@ -67,7 +68,9 @@ exports.getContact = function() {
             }
             break;
         }
-      });
+      }
+    
+  appModule.android.on("activityResult", handleActivityResult);
 
       appModule.android.foregroundActivity.startActivityForResult(
         openContactsIntent,
