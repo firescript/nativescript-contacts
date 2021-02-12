@@ -62,37 +62,43 @@ exports.getContact = function() {
   });
 };
 
-exports.getContactById = function(id) {
-  return new Promise(function(resolve, reject) {
+exports.getContactById = function (id, contactFields) {
+  return new Promise(function (resolve, reject) {
     if (!id) {
       reject('Missing Contact Identifier');
     }
+    contactFields = contactFields || [
+      'name',
+      'organization',
+      'nickname',
+      'photo',
+      'urls',
+      'phoneNumbers',
+      'emailAddresses',
+      'postalAddresses',
+    ]
     const store = new CNContactStore();
     const searchPredicate = CNContact.predicateForContactsWithIdentifiers([id]);
-    const keysToFetch = [
-        "givenName", 
-        "familyName", 
-        "middleName", 
-        "namePrefix", 
-        "nameSuffix", 
-        "phoneticGivenName", 
-        "phoneticMiddleName", 
-        "phoneticFamilyName", 
-        "nickname", 
-        "jobTitle", 
-        "departmentName", 
-        "organizationName", 
-        "note", 
-        "phoneNumbers", 
-        "emailAddresses", 
-        "postalAddresses", 
-        "urlAddresses", 
-        "imageData",
-        "imageDataAvailable"
-    ]; // All Properties that we are using in the Model
+    const keysToFetch = [];
+    if (contactFields.indexOf('name') > -1) {
+      keysToFetch.push(
+          "givenName", "familyName", "middleName", "namePrefix", "nameSuffix",
+          "phoneticGivenName", "phoneticMiddleName", "phoneticFamilyName"
+      );
+    }
+
+    if (contactFields.indexOf('organization') > -1) { keysToFetch.push("jobTitle", "departmentName", "organizationName"); }
+    if (contactFields.indexOf('nickname') > -1) { keysToFetch.push("nickname"); }
+    if (contactFields.indexOf('notes') > -1) { keysToFetch.push("note"); }
+    if (contactFields.indexOf('photo') > -1) { keysToFetch.push("imageData", "imageDataAvailable"); }
+    if (contactFields.indexOf('phoneNumbers') > -1) { keysToFetch.push("phoneNumbers"); }
+    if (contactFields.indexOf('emailAddresses') > -1) { keysToFetch.push("emailAddresses"); }
+    if (contactFields.indexOf('postalAddresses') > -1) { keysToFetch.push("postalAddresses"); }
+    if (contactFields.indexOf('urlAddresses') > -1) { keysToFetch.push("urlAddresses"); }
+
     let error;
     const foundContacts = store.unifiedContactsMatchingPredicateKeysToFetchError(searchPredicate, keysToFetch, error);
-  
+
     if (error) {
       reject(error.localizedDescription);
     }
@@ -100,7 +106,7 @@ exports.getContactById = function(id) {
     if (foundContacts && foundContacts.count > 0) {
       let contactModel = new Contact();
       contactModel.initializeFromNative(foundContacts[0]);
-      
+
       resolve({
         data: [contactModel],
         response: "fetch"
