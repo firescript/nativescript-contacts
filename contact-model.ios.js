@@ -1,6 +1,6 @@
 var helper = require("./contact-helper");
 var ContactCommon = require("./contact-model-common");
-var imageSource = require("image-source");
+var imageSource = require("@nativescript/core/image-source");
 
 var Contact = (function (_super) {
     global.__extends(Contact, _super);

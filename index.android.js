@@ -1,4 +1,4 @@
-var appModule = require("application");
+var appModule = require("@nativescript/core/application");
 var Contact = require("./contact-model");
 var KnownLabel = require("./known-label");
 var Group = require("./group-model");
