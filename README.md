@@ -52,7 +52,7 @@ Permissions.requestPermissions([android.Manifest.permission.GET_ACCOUNTS, androi
 #### getContact: Pick one contact and bring back its data.
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 contacts.getContact().then(function(args) {
@@ -82,9 +82,9 @@ contacts.getContact().then(function(args) {
 #### Save a new contact
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
-var imageSource = require("image-source");
+var imageSource = require("@nativescript/core/image-source");
 
 var newContact = new contacts.Contact();
 newContact.name.given = "John";
@@ -101,9 +101,9 @@ newContact.save();
 #### Update an existing contact
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
-var imageSource = require("image-source");
+var imageSource = require("@nativescript/core/image-source");
 
 contacts.getContact().then(function(args) {
   if (args.response === "selected") {
@@ -124,7 +124,7 @@ contacts.getContact().then(function(args) {
 #### Delete a contact
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 contacts.getContact().then(function(args) {
@@ -142,7 +142,7 @@ contacts.getContact().then(function(args) {
 #### Check if contact is Unified/Linked (iOS Specific)
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 contacts.getContact().then(function(args) {
@@ -160,7 +160,7 @@ contacts.getContact().then(function(args) {
 #### getContactsByName: Find all contacts whose name matches. Returns an array of contact data.
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 /*
@@ -186,7 +186,7 @@ contacts.getContactsByName("Hicks", contactFields).then(
 #### getAllContacts: Find all contacts. Returns an array of contact data.
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 /*
@@ -213,7 +213,7 @@ contacts.getAllContacts(contactFields).then(
 
 #### getContactById: Finds the contact with the matching identifier. Returns GetFetchResult. *(iOS Only)*
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 var contactId = '[Contact Identifier]'; // Assumes this is a valid contact identifier (Contact.id)
@@ -235,7 +235,7 @@ contacts.getContactById(contactId).then(
 #### getGroups: Find groups. Returns an array of group data.
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 contacts
@@ -263,7 +263,7 @@ contacts
 #### Save a new group
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 var groupModel = new contacts.Group();
@@ -277,7 +277,7 @@ groupModel.save(false);
 #### Delete a group
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 contacts.getGroups("Test Group").then(
@@ -302,7 +302,7 @@ contacts.getGroups("Test Group").then(
 #### Add Member To Group
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 contacts.getContact().then(function(args) {
@@ -330,7 +330,7 @@ contacts.getContact().then(function(args) {
 #### Remove Member From Group
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 contacts
@@ -368,7 +368,7 @@ contacts
 #### getContactsInGroup: Get all contacts in a group. Returns an array of contact data.
 
 ```js
-var app = require("application");
+var app = require("@nativescript/core/application");
 var contacts = require("nativescript-contacts");
 
 contacts

@@ -1,6 +1,6 @@
 var helper = require("./contact-helper");
 var GroupCommon = require("./group-model-common");
-var appModule = require("application");
+var appModule = require("@nativescript/core/application");
 
 /* missing constants from the {N} */
 var ACCOUNT_TYPE = "account_type"; // android.provider.ContactsContract.Groups.ACCOUNT_TYPE

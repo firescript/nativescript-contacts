@@ -1,4 +1,4 @@
-var appModule = require("application");
+var appModule = require("@nativescript/core/application");
 var KnownLabel = require("./known-label");
 var imageSource = require("image-source");
 
