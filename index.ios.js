@@ -1,4 +1,4 @@
-const Frame = require("@nativescript/core//ui/frame").Frame;
+const Frame = require("@nativescript/core/ui/frame").Frame;
 var Contact = require("./contact-model");
 var KnownLabel = require("./known-label");
 var Group = require("./group-model");
