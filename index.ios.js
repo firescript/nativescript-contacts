@@ -49,7 +49,7 @@ var CustomCNContactPickerViewControllerDelegate = NSObject.extend(
 exports.getContact = function() {
   return new Promise(function(resolve, reject) {
     var controller = CNContactPickerViewController.alloc().init();
-    var delegate = CustomCNContactPickerViewControllerDelegate.alloc().initWithResolveReject(
+    var delegate = CustomCNContactPickerViewControllerDelegate.new().initWithResolveReject(
       resolve,
       reject
     );
