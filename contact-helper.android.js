@@ -1,6 +1,6 @@
 var appModule = require("@nativescript/core/application");
 var KnownLabel = require("./known-label");
-var imageSource = require("image-source");
+var imageSource = require("@nativescript/core/image-source");
 
 /* missing constants from the {N} */
 var TYPE_CUSTOM = 0;
