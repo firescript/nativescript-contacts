@@ -1,7 +1,7 @@
 var helper = require("./contact-helper");
 var appModule = require("@nativescript/core/application");
 var ContactCommon = require("./contact-model-common");
-var imageSource = require('@nativescript/core/image-source');
+var imageSource = require('@nativescript/core');
 
 /* missing constants from the {N} */
 var ACCOUNT_TYPE = "account_type"; // android.provider.ContactsContract.RawContacts.ACCOUNT_TYPE
